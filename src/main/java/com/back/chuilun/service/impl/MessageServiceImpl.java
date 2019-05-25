@@ -1,0 +1,130 @@
+package com.back.chuilun.service.impl;
+
+import com.back.chuilun.dao.MessageMapper;
+import com.back.chuilun.entity.Message;
+import com.back.chuilun.entity.Result;
+import com.back.chuilun.service.MessageService;
+import org.apache.log4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.ArrayList;
+import java.util.List;
+
+@Service
+public class MessageServiceImpl implements MessageService {
+
+    @Autowired
+    private MessageMapper messageMapper;
+    private Logger logger = Logger.getLogger(MessageServiceImpl.class);
+
+    @Override
+    public Result add(Object object) {
+        return  new Result();
+    }
+
+    @Override
+    public Result delete(Long number) {
+        int i = messageMapper.deleteByPrimaryKey(number);
+        if (i==1){//删除行数为1行，代表删除成功
+            return  new Result(1,"删除成功");
+        }else {
+            return new Result(0, "删除失败");
+        }
+    }
+
+    @Override
+    public Result update(Object object) {
+        return new Result();
+    }
+
+    @Override
+    public List findAll() {
+        List<Message> messages = messageMapper.selectAll();
+        return messages;
+    }
+
+    /**
+     * 先查找全部数据，然后通过比较作品名称和上架状态来筛选出相关对象，然后加入list集合中。
+     * @param worksName
+     * @param mstatus
+     * @return list
+     */
+    public List findAll(String worksName,Integer mstatus){
+        List<Message> list = new ArrayList<Message>();
+        List<Message> messages = messageMapper.selectAll();
+        //logger.info(messages+"1111111111111111");
+        for (Message message:messages){
+            if(mstatus==null){
+                if(message.getWorksName().equals(worksName)){
+                    list.add(message);
+                }
+            }else {
+                if(message.getWorksName().equals(worksName)){
+                    if (message.getMstatus()==mstatus){
+                        list.add(message);
+                       // logger.info(message+"22222222222222");
+                    }
+                }
+            }
+        }
+       return list;
+    }
+
+    /**
+     * 传入messageId然后通过ID查询出该条留言对象，然后获取该对象的留言
+     * @param messageId
+     * @return
+     */
+    public Result editMessage(Long messageId){
+        Message message = messageMapper.selectByPrimaryKey(messageId);
+        String msg = message.getMessage();
+        if(msg==null){//如果留言为空
+            return  new Result(-1,"没有回复",msg);
+        }else {
+            return  new Result(0,"回复显示正常",msg);
+        }
+
+    }
+
+    /**
+     * 设置精选留言，若传入mstatus与原数据库相同，返回-1，否则返回0设置成功。
+     * @param messageId
+     * @param mstatus
+     * @return
+     */
+    public Result updateMstatus(Long messageId, Integer mstatus){
+        /*Message ms = new Message();
+        ms.setMessageId(messageId);
+        ms.setWorksName("测试啊，大佬");*/
+        Message message = messageMapper.selectByPrimaryKey(messageId);
+        if(message.getMstatus()==mstatus){//根据ID查询出的对象状态码和传入对象一致
+            if (mstatus==1){//已经为精选留言状态
+                return new Result(-1,"目前为精选留言状态，请勿重复设置");
+            }else {//已经为非精选留言状态
+                return new Result(-1,"目前未非精选留言状态，请勿重复设置");
+            }
+        }else {//查询出对象和传入对象状态码不一致
+            message.setMstatus(mstatus); //将将要设置的对象码传入对象
+        }
+        int i = messageMapper.updateByPrimaryKey(message);
+        if (i==1) {//更新成功
+            return new Result(0, "设置成功");
+        }else {//更新失败
+            return new Result(1, "设置异常");
+        }
+    }
+
+
+
+    public Result save(Long messageId,String spare){
+        Message message = messageMapper.selectByPrimaryKey(messageId);
+        message.setSpare(spare);
+        int i = messageMapper.updateByPrimaryKey(message);
+        if (i==1) {//更新成功
+            return new Result(0, "更新成功");
+        }else {//更新失败
+            return new Result(1, "更新失败");
+        }
+    }
+}
