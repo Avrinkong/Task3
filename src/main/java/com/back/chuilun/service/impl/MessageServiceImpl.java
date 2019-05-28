@@ -39,9 +39,9 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public List findAll() {
+    public Result findAll() {
         List<Message> messages = messageMapper.selectAll();
-        return messages;
+        return new Result(0,"查找成功",messages);
     }
 
     /**

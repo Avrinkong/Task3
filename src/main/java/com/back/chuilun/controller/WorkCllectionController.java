@@ -62,7 +62,20 @@ public class WorkCllectionController {
     }
 
 
-    public Result updateById(Integer portfolio_id,String portfolio_name){
-        wcmi.updateById(portfolio_id,portfolio_name);
+
+    @RequestMapping(value = "update",method = RequestMethod.POST)
+    @ResponseBody
+    public Result updateById(Long portfolioId,String portfolioName){
+        Result result = wcmi.updateById(portfolioId, portfolioName);
+        return result;
     }
+
+    @RequestMapping(value = "delete",method =RequestMethod.POST)
+    @ResponseBody
+    public Result deleteById(Long portfolioId){
+        Result result = wcmi.deleteById(portfolioId);
+        return result;
+    }
+
+
 }

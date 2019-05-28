@@ -18,9 +18,9 @@
     <result column="works_intro" jdbcType="VARCHAR" property="worksIntro" />
     <result column="works_updateman" jdbcType="VARCHAR" property="worksUpdateman" />
     <result column="works_spare" jdbcType="VARCHAR" property="worksSpare" />
-    <result column="works_bintro" jdbcType="VARCHAR" property="worksBintro" />
-    <result column="works_mpic" jdbcType="VARBINARY" property="worksMpic" />
-    <result column="works_pic" jdbcType="VARBINARY" property="worksPic" />
+    <result column="works_bintro" jdbcType="LONGVARCHAR" property="worksBintro" />
+    <result column="works_mpic" jdbcType="VARCHAR" property="worksMpic" />
+    <result column="works_pic" jdbcType="VARCHAR" property="worksPic" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--
@@ -45,7 +45,7 @@
       #{secondPorName,jdbcType=VARCHAR}, #{wcreateTime,jdbcType=BIGINT}, #{changeTime,jdbcType=BIGINT}, 
       #{editor,jdbcType=VARCHAR}, #{wstatus,jdbcType=INTEGER}, #{worksUrl,jdbcType=VARCHAR}, 
       #{worksIntro,jdbcType=VARCHAR}, #{worksUpdateman,jdbcType=VARCHAR}, #{worksSpare,jdbcType=VARCHAR}, 
-      #{worksBintro,jdbcType=VARCHAR}, #{worksMpic,jdbcType=VARBINARY}, #{worksPic,jdbcType=VARBINARY}
+      #{worksBintro,jdbcType=LONGVARCHAR}, #{worksMpic,jdbcType=VARCHAR}, #{worksPic,jdbcType=VARCHAR}
       )
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.back.chuilun.entity.Works">
@@ -65,9 +65,9 @@
       works_intro = #{worksIntro,jdbcType=VARCHAR},
       works_updateman = #{worksUpdateman,jdbcType=VARCHAR},
       works_spare = #{worksSpare,jdbcType=VARCHAR},
-      works_bintro = #{worksBintro,jdbcType=VARCHAR},
-      works_mpic = #{worksMpic,jdbcType=VARBINARY},
-      works_pic = #{worksPic,jdbcType=VARBINARY}
+      works_bintro = #{worksBintro,jdbcType=LONGVARCHAR},
+      works_mpic = #{worksMpic,jdbcType=VARCHAR},
+      works_pic = #{worksPic,jdbcType=VARCHAR}
     where works_id = #{worksId,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">

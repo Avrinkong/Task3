@@ -2,8 +2,6 @@ package com.back.chuilun.service;
 
 import com.back.chuilun.entity.Result;
 
-import java.util.List;
-
 public interface BaseService {
     Result add(Object object);
 
@@ -11,6 +9,6 @@ public interface BaseService {
 
     Result update(Object object);
 
-     List findAll();
+     Result findAll();
 
 }

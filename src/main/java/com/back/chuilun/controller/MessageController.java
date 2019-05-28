@@ -23,9 +23,8 @@ public class MessageController {
     Logger logger = Logger.getLogger(MessageController.class);
 
     @RequestMapping(value = "find",method = RequestMethod.GET)
-
     public ModelAndView findMessage(){
-        List<Message> all = ms.findAll();
+        List<Message> all = (List<Message>) ms.findAll();
         ModelAndView mav = new ModelAndView();
         mav.addObject("list",all);
         mav.setView(new MappingJackson2JsonView());

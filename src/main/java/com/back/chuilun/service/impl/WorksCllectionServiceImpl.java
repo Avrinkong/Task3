@@ -50,7 +50,7 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
     }
 
     @Override
-    public List findAll() {
+    public Result findAll() {
         return null;
     }
 
@@ -146,7 +146,7 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
     }
 
     /**
-     *
+     *通过id和状态对象形成排序
      * @param worksCllection
      * @return
      */
@@ -156,6 +156,33 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
             return new Result(0,"设置成功",i);
         }else {
             return new Result(-1,"设置失败",i);
+        }
+    }
+
+    /**
+     * 通过ID和修改作品集名称
+     * @param portfolioId
+     * @param portfolioName
+     * @return
+     */
+    public Result updateById(Long portfolioId,String portfolioName){
+        WorksCllection worksCllection = new WorksCllection();
+        worksCllection.setPortfolioId(portfolioId);
+        worksCllection.setPortfolioName(portfolioName);
+        int i = wcm.updateByPrimaryKey(worksCllection);
+        if(i>0){
+            return new Result(0,"编辑成功",i);
+        }else {
+            return new Result(-1,"编辑失败",i);
+        }
+    }
+
+    public Result deleteById(Long portfolioId){
+        int i = wcm.deleteByPrimaryKey(portfolioId);
+        if(i>0){
+            return new Result(0,"删除成功",i);
+        }else {
+            return new Result(-1,"删除失败",i);
         }
     }
 }
