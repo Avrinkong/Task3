@@ -51,7 +51,7 @@ public class MessageServiceImpl implements MessageService {
      * @return list
      */
     public List findAll(String worksName,Integer mstatus){
-        List<Message> list = new ArrayList<Message>();
+        List<Message> list = new ArrayList<>();
         List<Message> messages = messageMapper.selectAll();
         //logger.info(messages+"1111111111111111");
         for (Message message:messages){

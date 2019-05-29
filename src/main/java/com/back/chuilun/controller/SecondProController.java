@@ -32,8 +32,20 @@ public class SecondProController {
     @RequestMapping(value = "find",method = RequestMethod.POST)
     @ResponseBody
     public Result findSecondPro(String secName, Integer secStatus){
-        List<SecondPor> all = secondProService.findAll(secName,secStatus);
-        return new Result(0,"success",all);
+        if (secName!=null&&!secName.trim().equals("")){
+            if (secStatus!=null){
+                List<SecondPor> all = secondProService.findAll(secName,secStatus);
+                if (all.size()>0) {
+                    return new Result(0, "success", all);
+                }else {
+                    return new Result(-1,"false");
+                }
+            }else {
+                return new Result(-1,"二级标题状态为空");
+            }
+        }else {
+            return new Result(-1,"二级标题名不能为空");
+        }
     }
 
     @RequestMapping(value = "sort",method = RequestMethod.POST)
@@ -41,38 +53,72 @@ public class SecondProController {
     public Result sortSecondPro(@RequestBody String jsonObject) {
         JSONObject jsonObject1 = JSONObject.parseObject(jsonObject);
         List<SecondPor> list = JSON.parseArray(jsonObject1.getString("secondPor"), SecondPor.class);
-        Result result = secondProService.sortSecondPor(list);
-
-
-        return result;
+        if (list.size()>0){
+            Result result = secondProService.sortSecondPor(list);
+            return result;
+        }else {
+            return new Result(-1,"参数不能为空");
+        }
     }
 
     @RequestMapping(value = "add",method = RequestMethod.POST)
     @ResponseBody
     public Result addPortfolio(String secName,String portfolioName){
-        Result add = secondProService.add(secName,portfolioName);
-        return add;
+        if(secName!=null){
+            if (portfolioName!=null&&!portfolioName.trim().equals("")){
+                Result add = secondProService.add(secName,portfolioName);
+                return add;
+            }else {
+                return new Result(-1,"导航不能为空");
+            }
+        }else {
+            return new Result(-1,"二级标题不能为空");
+        }
     }
 
     @RequestMapping(value = "secstatus",method = RequestMethod.POST)
     @ResponseBody
     public Result updatePortfolio(Integer secondPorId,String secName,Integer secStatus){
-        Result result = secondProService.updateSecondPro(secondPorId, secName, secStatus);
-        return result;
+        if (secondPorId!=null){
+            if (secName!=null&&!secName.trim().equals("")){
+                if(secStatus!=null){
+                    Result result = secondProService.updateSecondPro(secondPorId, secName, secStatus);
+                    return result;
+                }else {
+                    return new Result(-1,"二级标题上下架不能为空");
+                }
+            }else {
+                return new Result(-1,"二级标题名称不能为空");
+            }
+        }else {
+            return new Result(-1,"二级标题ID不能为空");
+        }
     }
 
     @RequestMapping(value = "update",method = RequestMethod.POST)
     @ResponseBody
     public Result updateById(Integer secondPorId,String secName){
-        Result result = secondProService.updateById(secondPorId, secName);
-        return result;
+        if(secondPorId!=null){
+            if (secName!=null&&!secName.trim().equals("")){
+                Result result = secondProService.updateById(secondPorId, secName);
+                return result;
+            }else {
+                return new Result(-1,"二级标题名称不能为空");
+            }
+        }else {
+            return new Result(-1,"二级标题ID不能为空");
+        }
     }
 
     @RequestMapping(value = "delete",method =RequestMethod.POST)
     @ResponseBody
     public Result deleteById(Integer secondPorId){
-        Result result = secondProService.deleteById(secondPorId);
-        return result;
+        if (secondPorId!=null){
+            Result result = secondProService.deleteById(secondPorId);
+            return result;
+        }else {
+            return new Result(-1,"二级标题不能为空");
+        }
     }
 }
 

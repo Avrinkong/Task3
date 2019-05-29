@@ -16,7 +16,7 @@
     <result column="banner_updateman" jdbcType="VARCHAR" property="bannerUpdateman" />
     <result column="banner_sor" jdbcType="INTEGER" property="bannerSor" />
     <result column="banner_spare" jdbcType="VARCHAR" property="bannerSpare" />
-    <result column="banner_pic" jdbcType="VARBINARY" property="bannerPic" />
+    <result column="banner_pic" jdbcType="VARCHAR" property="bannerPic" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--
@@ -38,7 +38,7 @@
     values (#{bannerId,jdbcType=INTEGER}, #{bannerEditor,jdbcType=VARCHAR}, #{bannerUrl,jdbcType=VARCHAR}, 
       #{bannerStatus,jdbcType=INTEGER}, #{bannerCreatetime,jdbcType=BIGINT}, #{bannerUpdatetime,jdbcType=BIGINT}, 
       #{bannerCreateman,jdbcType=VARCHAR}, #{bannerUpdateman,jdbcType=VARCHAR}, #{bannerSor,jdbcType=INTEGER}, 
-      #{bannerSpare,jdbcType=VARCHAR}, #{bannerPic,jdbcType=VARBINARY})
+      #{bannerSpare,jdbcType=VARCHAR}, #{bannerPic,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.back.chuilun.entity.Bannercontrol">
     <!--
@@ -55,7 +55,7 @@
       banner_updateman = #{bannerUpdateman,jdbcType=VARCHAR},
       banner_sor = #{bannerSor,jdbcType=INTEGER},
       banner_spare = #{bannerSpare,jdbcType=VARCHAR},
-      banner_pic = #{bannerPic,jdbcType=VARBINARY}
+      banner_pic = #{bannerPic,jdbcType=VARCHAR}
     where banner_id = #{bannerId,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
@@ -67,6 +67,7 @@
     banner_createman, banner_updateman, banner_sor, banner_spare, banner_pic
     from bannercontrol
     where banner_id = #{bannerId,jdbcType=INTEGER}
+    order by banner_sor
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     <!--
@@ -76,5 +77,17 @@
     select banner_id, banner_editor, banner_url, banner_status, banner_createtime, banner_updatetime, 
     banner_createman, banner_updateman, banner_sor, banner_spare, banner_pic
     from bannercontrol
+    order by banner_sor
   </select>
+
+  <update id="updateSorByKey" >
+
+    <foreach collection="list"  item="var" separator=";">
+      update bannercontrol
+      <set>
+        banner_sor = ${var.bannerSor }
+      </set>
+      where banner_id = ${var.bannerId}
+    </foreach>
+  </update>
 </mapper>

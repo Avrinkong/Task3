@@ -32,8 +32,20 @@ public class WorksController {
     @RequestMapping(value = "find",method = RequestMethod.POST)
     @ResponseBody
     public Result findWorks(String worksName, Integer wstatus){
-        List<Works> all = worksService.findAll(worksName,wstatus);
-        return new Result(0,"success",all);
+        if (worksName!=null&&worksName.trim().equals("")){
+            if (wstatus!=null){
+                List<Works> all = worksService.findAll(worksName,wstatus);
+                if (all.size()>0) {
+                    return new Result(0, "success", all);
+                }else {
+                    return new Result(-1,"false");
+                }
+            }else {
+                return new Result(-1,"作品集上下架状态不能为空");
+            }
+        }else {
+            return new Result(-1,"作品集名称不能为空");
+        }
     }
 
   /*  @RequestMapping(value = "add",method = RequestMethod.POST)
@@ -96,51 +108,119 @@ public class WorksController {
     @RequestMapping(value = "add",method = RequestMethod.POST)
     @ResponseBody
     public Result addWorks(String worksName,String worksIntro,String worksMpic,String worksUrl,String worksPic,String worksBintro){
-       Works works = new Works();
-       works.setWorksName(worksName);
-       works.setWorksIntro(worksIntro);
-       works.setWorksMpic(worksMpic);
-       works.setWorksUrl(worksUrl);
-       works.setWorksPic(worksPic);
-       works.setWorksBintro(worksBintro);
+        if (worksName!=null&&!worksName.trim().equals("")){
+            if (worksIntro!=null&&!worksIntro.trim().equals("")){
+                if (worksMpic!=null&&!worksMpic.trim().equals("")){
+                    if (worksUrl!=null&&!worksUrl.trim().equals("")){
+                        if (worksPic!=null&&worksPic.trim().equals("")){
+                            if (worksBintro!=null&&worksBintro.trim().equals("")){
+                                Works works = new Works();
+                                works.setWorksName(worksName);
+                                works.setWorksIntro(worksIntro);
+                                works.setWorksMpic(worksMpic);
+                                works.setWorksUrl(worksUrl);
+                                works.setWorksPic(worksPic);
+                                works.setWorksBintro(worksBintro);
+                                Result update = worksService.add(works);
+                                return update;
+                            }else {
+                                return new Result(-1,"工作室完整简介不能为空");
+                            }
+                        }else {
+                            return new Result(-1,"作品照片不能为空");
+                        }
+                    }else {
+                        return new Result(-1,"作品链接不能为空");
+                    }
+                }else {
+                    return new Result(-1,"作品缩略图不能为空");
+                }
+            }else {
+                return new Result(-1,"作品简介不能为空");
+            }
+        }else {
+            return new Result(-1,"作品集名称不能为空");
+        }
       /* Date date=new Date();
        long timestamp=date.getTime();
        works.setWcreateTime(timestamp);
        works.setChangeTime(timestamp);*/
-        Result update = worksService.add(works);
-        return update;
     }
 
 
     @RequestMapping(value = "wstatus",method = RequestMethod.POST)
     @ResponseBody
     public Result updateWstatus(Integer worksId,String worksName,Integer wstatus){
-        Result result = worksService.updateWstatus(worksId, worksName, wstatus);
-        return result;
+        if (worksId!=null){
+            if (worksName!=null&&!worksName.trim().equals("")){
+                if (wstatus!=null){
+                    Result result = worksService.updateWstatus(worksId, worksName, wstatus);
+                    return result;
+                }else {
+                    return new Result(-1,"作品集上下架状态不能为空");
+                }
+            }else {
+                return new Result(-1,"作品集名称不能为空");
+            }
+        }else {
+            return new Result(-1,"作品集ID不能为空");
+        }
     }
 
     @RequestMapping(value = "delete",method = RequestMethod.POST)
     @ResponseBody
     public Result deleteById(Integer worksId){
-        Result delete = worksService.delete(worksId);
-        return delete;
+        if (worksId!=null){
+            Result delete = worksService.delete(worksId);
+            return delete;
+        }else {
+            return new Result(-1,"作品集ID不能为空");
+        }
     }
 
     @RequestMapping(value = "update",method = RequestMethod.POST)
     @ResponseBody
     public Result updateWorks(Integer worksId,String worksName,String worksIntro,String worksMpic,String worksUrl,String worksPic,String worksBintro){
-        Works works = worksService.findById(worksId);
-        works.setWorksName(worksName);
-        works.setWorksIntro(worksIntro);
-        works.setWorksMpic(worksMpic);
-        works.setWorksUrl(worksUrl);
-        works.setWorksPic(worksPic);
-        works.setWorksBintro(worksBintro);
+        if (worksId!=null){
+            if (worksName!=null&&!worksName.trim().equals("")){
+                if (worksIntro!=null&&!worksIntro.trim().equals("")){
+                    if (worksMpic!=null&&!worksMpic.trim().equals("")){
+                        if (worksUrl!=null&&!worksUrl.trim().equals("")){
+                            if (worksPic!=null&&worksPic.trim().equals("")){
+                                if (worksBintro!=null&&worksBintro.trim().equals("")){
+                                    Works works = worksService.findById(worksId);
+                                    works.setWorksName(worksName);
+                                    works.setWorksIntro(worksIntro);
+                                    works.setWorksMpic(worksMpic);
+                                    works.setWorksUrl(worksUrl);
+                                    works.setWorksPic(worksPic);
+                                    works.setWorksBintro(worksBintro);
+                                    Result update = worksService.update(works);
+                                    return update;
+                                }else {
+                                    return new Result(-1,"工作室完整简介不能为空");
+                                }
+                            }else {
+                                return new Result(-1,"作品照片不能为空");
+                            }
+                        }else {
+                            return new Result(-1,"作品链接不能为空");
+                        }
+                    }else {
+                        return new Result(-1,"作品缩略图不能为空");
+                    }
+                }else {
+                    return new Result(-1,"作品简介不能为空");
+                }
+            }else {
+                return new Result(-1,"作品集名称不能为空");
+            }
+        }else {
+            return new Result(-1,"工作室ID不能为空");
+        }
       /* Date date=new Date();
        long timestamp=date.getTime();
        works.setWcreateTime(timestamp);
        works.setChangeTime(timestamp);*/
-        Result update = worksService.update(works);
-        return update;
     }
 }

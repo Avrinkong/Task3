@@ -65,6 +65,7 @@
     message, createman, spare
     from message
     where message_id = #{messageId,jdbcType=BIGINT}
+    order by spare
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     <!--
@@ -74,5 +75,6 @@
     select message_id, works_name, visit_name, mstatus, create_time, update_time, editor, 
     message, createman, spare
     from message
+    order by spare
   </select>
 </mapper>

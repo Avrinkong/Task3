@@ -35,38 +35,71 @@ public class MessageController {
     @RequestMapping(value = "find",method = RequestMethod.POST)
     @ResponseBody
     public Result findMessage(String worksName, Integer mstatus){
-        List<Message> all = ms.findAll(worksName,mstatus);
-//        ModelAndView mav = new ModelAndView();
-//        mav.addObject("list",all);
-        //mav.setView(message);
-        return new Result(0,"success",all);
+        if(worksName!=null&&!worksName.trim().equals("")){
+            List<Message> all = ms.findAll(worksName,mstatus);
+            if (all.size()>0) {
+                return new Result(0, "success", all);
+            }else {
+                return new Result(-1,"false");
+            }
+        }
+        return new Result(-1,"做品名称不能为空或者为空格");
     }
 
     @RequestMapping(value = "edit",method = RequestMethod.POST)
     @ResponseBody
     public Result editMessage(Long messageId){
-        Result result = ms.editMessage(messageId);
+        if(messageId!=null){
+            Result result = ms.editMessage(messageId);
+            return result;
+        }
+        Result result = new Result(-1,"信息ID错误");
         return result;
     }
 
    @RequestMapping(value = "editstatus",method = RequestMethod.POST)
    @ResponseBody
    public Result editstatus(Long messageId,Integer mstatus){
-       Result result = ms.updateMstatus(messageId, mstatus);
+        if(messageId!=null){
+            if (mstatus!=null){
+                Result result = ms.updateMstatus(messageId, mstatus);
+                return result;
+            }
+            Result result = new Result(-1,"状态不能为空");
+            return result;
+        }
+       Result result = new Result(-1,"消息id不能为空");
        return result;
+
    }
 
    @RequestMapping(value = "delete",method = RequestMethod.POST)
    @ResponseBody
    public Result delete(Long messageId){
-       Result delete = ms.delete(messageId);
-       return delete;
+        if (messageId!=null){
+            Result delete = ms.delete(messageId);
+            return delete;
+        }
+       Result result = new Result(-1,"消息id不能为空");
+       return result;
    }
 
+    /**
+     * 保存留言回复
+     * @param messageId
+     * @param spare
+     * @return
+     */
    @RequestMapping(value = "save",method = RequestMethod.POST)
    @ResponseBody
    public Result save(Long messageId,String spare){
-       Result save = ms.save(messageId, spare);
-       return save;
+        if (messageId!=null){
+            if (spare!=null&&!spare.trim().equals("")){
+                Result save = ms.save(messageId, spare);
+                return save;
+            }
+            return new Result(-1,"回复不能为空");
+        }
+        return new Result(-1,"留言ID不能为空");
    }
 }

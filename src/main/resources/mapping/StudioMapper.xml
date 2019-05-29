@@ -15,7 +15,7 @@
     <result column="studio_text" jdbcType="VARCHAR" property="studioText" />
     <result column="studio_updateman" jdbcType="VARCHAR" property="studioUpdateman" />
     <result column="studio_spare" jdbcType="VARCHAR" property="studioSpare" />
-    <result column="studio_picture" jdbcType="VARBINARY" property="studioPicture" />
+    <result column="studio_picture" jdbcType="VARCHAR" property="studioPicture" />
   </resultMap>
   <delete id="deleteByPrimaryKey" parameterType="java.lang.Integer">
     <!--
@@ -37,7 +37,7 @@
     values (#{studioId,jdbcType=INTEGER}, #{studioName,jdbcType=VARCHAR}, #{studioStatus,jdbcType=INTEGER}, 
       #{studioCreatetime,jdbcType=BIGINT}, #{studioUpdatetime,jdbcType=BIGINT}, #{studioEditor,jdbcType=VARCHAR}, 
       #{studioText,jdbcType=VARCHAR}, #{studioUpdateman,jdbcType=VARCHAR}, #{studioSpare,jdbcType=VARCHAR}, 
-      #{studioPicture,jdbcType=VARBINARY})
+      #{studioPicture,jdbcType=VARCHAR})
   </insert>
   <update id="updateByPrimaryKey" parameterType="com.back.chuilun.entity.Studio">
     <!--
@@ -53,7 +53,7 @@
       studio_text = #{studioText,jdbcType=VARCHAR},
       studio_updateman = #{studioUpdateman,jdbcType=VARCHAR},
       studio_spare = #{studioSpare,jdbcType=VARCHAR},
-      studio_picture = #{studioPicture,jdbcType=VARBINARY}
+      studio_picture = #{studioPicture,jdbcType=VARCHAR}
     where studio_id = #{studioId,jdbcType=INTEGER}
   </update>
   <select id="selectByPrimaryKey" parameterType="java.lang.Integer" resultMap="BaseResultMap">
