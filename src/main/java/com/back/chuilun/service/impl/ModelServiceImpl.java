@@ -52,16 +52,9 @@ public class ModelServiceImpl implements ModelService {
 
     public List findAll(String modelName) {
         List<Model> list = new ArrayList<>();
-        List<Model> models = modelMapper.selectAll();
+        List<Model> models = modelMapper.selectByModelName(modelName);
         //logger.info(messages+"1111111111111111");
-        for (Model m:models){
-                if (m.getModelName()!=null) {
-                    if (m.getModelName().equals(modelName)) {
-                            list.add(m);
-                    }
-                }
-            }
-        return list;
+        return models;
     }
 
     public Result updateById(Integer modelId ,String modelName, Integer fatherId, String modelUrl) {

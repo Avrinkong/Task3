@@ -7,7 +7,6 @@ import com.back.chuilun.service.RoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -53,15 +52,9 @@ public class RoleServiceImpl implements RoleService {
     }
 
     public List findAll(String roleName) {
-        List<Role> list = new ArrayList<>();
-        List<Role> roles = roleMapper.selectAll();
+        List<Role> roles = roleMapper.selectByRoleName(roleName);
         //logger.info(messages+"1111111111111111");
-        for (Role role:roles){
-                if(role.getRoleName().equals(roleName)){
-                    list.add(role);
-                }
-            }
-        return list;
+        return roles;
     }
 
     public Result updateById(Role role) {

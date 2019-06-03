@@ -18,22 +18,21 @@ public class GlobalExceptionHandler {
     private static final Logger LOGGER = LoggerFactory.getLogger(GlobalExceptionHandler.class);
 
     /**
-     * 处理所有不可知的异常
+     * 处理所有接口数据验证异常
      * @param e
-     * @return
+     * @return result
      */
-    @ExceptionHandler(Exception.class)
+    @ExceptionHandler(MethodArgumentNotValidException.class)
     @ResponseBody
-    Result handleException(Exception e){
+    Result handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
         LOGGER.error(e.getMessage(), e);
-
-        Result result = new Result<>();
-        result.setMessage("操作失败！");
+        Result result = new Result();
+        result.setMessage(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
         return result;
     }
 
     /**
-     * 处理所有业务异常
+     * 自定义处理所有业务异常类，本项目未使用，使用Result进行错误返回。
      * @param e
      * @return
      */
@@ -48,17 +47,17 @@ public class GlobalExceptionHandler {
     }
 
     /**
-     * 处理所有接口数据验证异常
+     * 处理所有不可知的异常
      * @param e
-     * @return
+     * @return result
      */
-    @ExceptionHandler(MethodArgumentNotValidException.class)
+    @ExceptionHandler(Exception.class)
     @ResponseBody
-    Result handleMethodArgumentNotValidException(MethodArgumentNotValidException e){
+    Result handleException(Exception e){
         LOGGER.error(e.getMessage(), e);
 
-        Result result = new Result();
-        result.setMessage(e.getBindingResult().getAllErrors().get(0).getDefaultMessage());
+        Result result = new Result<>();
+        result.setMessage("操作失败！");
         return result;
     }
 }

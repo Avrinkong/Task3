@@ -44,4 +44,6 @@ public interface RoleMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Role record);
+
+    List<Role> selectByRoleName(String roleName);
 }

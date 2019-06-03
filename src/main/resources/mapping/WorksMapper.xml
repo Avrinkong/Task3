@@ -80,6 +80,7 @@
     works_mpic, works_pic
     from works
     where works_id = #{worksId,jdbcType=INTEGER}
+    order by change_time
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     <!--
@@ -90,5 +91,6 @@
     editor, wstatus, works_url, works_intro, works_updateman, works_spare, works_bintro, 
     works_mpic, works_pic
     from works
+    order by change_time
   </select>
 </mapper>

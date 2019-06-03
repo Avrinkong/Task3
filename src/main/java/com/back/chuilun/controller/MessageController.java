@@ -9,8 +9,6 @@ import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.view.json.MappingJackson2JsonView;
 
 import java.util.List;
 
@@ -23,19 +21,25 @@ public class MessageController {
     Logger logger = Logger.getLogger(MessageController.class);
 
     @RequestMapping(value = "find",method = RequestMethod.GET)
-    public ModelAndView findMessage(){
-        List<Message> all = (List<Message>) ms.findAll();
-        ModelAndView mav = new ModelAndView();
-        mav.addObject("list",all);
-        mav.setView(new MappingJackson2JsonView());
-        //mav.setView(message);
-        return mav;
+    @ResponseBody
+    public Result findMessage(){
+        Result all = ms.findAll();
+        return all;
+    }
+
+    @RequestMapping(value = "findbyname",method = RequestMethod.POST)
+    @ResponseBody
+    public Result findMessageByName(String name){
+      //  name="%"+name+"%";
+        Result all = ms.find(name);
+        return all;
     }
 
     @RequestMapping(value = "find",method = RequestMethod.POST)
     @ResponseBody
     public Result findMessage(String worksName, Integer mstatus){
         if(worksName!=null&&!worksName.trim().equals("")){
+           // worksName="%"+worksName+"%";
             List<Message> all = ms.findAll(worksName,mstatus);
             if (all.size()>0) {
                 return new Result(0, "success", all);
@@ -43,7 +47,7 @@ public class MessageController {
                 return new Result(-1,"false");
             }
         }
-        return new Result(-1,"做品名称不能为空或者为空格");
+        return new Result(-1,"作品名称不能为空或者为空格");
     }
 
     @RequestMapping(value = "edit",method = RequestMethod.POST)
@@ -95,11 +99,17 @@ public class MessageController {
    public Result save(Long messageId,String spare){
         if (messageId!=null){
             if (spare!=null&&!spare.trim().equals("")){
-                Result save = ms.save(messageId, spare);
-                return save;
+                if (spare.length()<=150){
+                    Result save = ms.save(messageId, spare);
+                    return save;
+                }else {
+                    return new Result(-1,"留言不能超过150个字");
+                }
+            }else {
+                return new Result(-1,"回复不能为空");
             }
-            return new Result(-1,"回复不能为空");
+        }else {
+            return new Result(-1,"留言ID不能为空");
         }
-        return new Result(-1,"留言ID不能为空");
    }
 }

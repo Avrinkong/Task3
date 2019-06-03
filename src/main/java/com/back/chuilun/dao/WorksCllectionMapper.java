@@ -49,4 +49,6 @@ public interface WorksCllectionMapper {
 
     int updateSpareByKey(List<WorksCllection> worksCllection);
 
+    List<WorksCllection> selectByPName(String portfolioName);
+
 }

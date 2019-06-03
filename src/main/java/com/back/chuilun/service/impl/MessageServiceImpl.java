@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -44,6 +45,10 @@ public class MessageServiceImpl implements MessageService {
         return new Result(0,"查找成功",messages);
     }
 
+    public Result find(String name){
+        List<Message> list = messageMapper.selectByWorksName(name);
+        return new Result(0,"根据名称搜索",list);
+    }
     /**
      * 先查找全部数据，然后通过比较作品名称和上架状态来筛选出相关对象，然后加入list集合中。
      * @param worksName
@@ -56,11 +61,11 @@ public class MessageServiceImpl implements MessageService {
         //logger.info(messages+"1111111111111111");
         for (Message message:messages){
             if(mstatus==null){
-                if(message.getWorksName().equals(worksName)){
+                if(message.getWorksName().contains(worksName)){
                     list.add(message);
                 }
             }else {
-                if(message.getWorksName().equals(worksName)){
+                if(message.getWorksName().contains(worksName)){
                     if (message.getMstatus()==mstatus){
                         list.add(message);
                        // logger.info(message+"22222222222222");
@@ -106,6 +111,9 @@ public class MessageServiceImpl implements MessageService {
             }
         }else {//查询出对象和传入对象状态码不一致
             message.setMstatus(mstatus); //将将要设置的对象码传入对象
+            Date date=new Date();
+            long timestamp=date.getTime();
+            message.setUpdateTime(timestamp);
         }
         int i = messageMapper.updateByPrimaryKey(message);
         if (i==1) {//更新成功
@@ -120,6 +128,9 @@ public class MessageServiceImpl implements MessageService {
     public Result save(Long messageId,String spare){
         Message message = messageMapper.selectByPrimaryKey(messageId);
         message.setSpare(spare);
+        Date date=new Date();
+        long timestamp=date.getTime();
+        message.setUpdateTime(timestamp);
         int i = messageMapper.updateByPrimaryKey(message);
         if (i==1) {//更新成功
             return new Result(0, "更新成功");

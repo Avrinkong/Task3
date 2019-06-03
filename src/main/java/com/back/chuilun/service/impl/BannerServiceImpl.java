@@ -4,6 +4,8 @@ import com.back.chuilun.dao.BannercontrolMapper;
 import com.back.chuilun.entity.Bannercontrol;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.service.BannerService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -34,7 +36,7 @@ public class BannerServiceImpl implements BannerService {
     }
 
     /**
-     * 查找所以BANNER图
+     * 查找所有BANNER图
      * @return
      */
     @Override
@@ -43,7 +45,6 @@ public class BannerServiceImpl implements BannerService {
         if(bannercontrols!=null){
             return  new Result(0,"进入页面成功",bannercontrols);
         }else {
-
             return new Result(-1,"进入页面失败",bannercontrols);
         }
     }
@@ -56,7 +57,7 @@ public class BannerServiceImpl implements BannerService {
      */
     public List findAll(Integer bannerStatus, String bannerEditor){
         List<Bannercontrol> list = new ArrayList<>();
-        List<Bannercontrol> bannercontrols = bannerMapper.selectAll();
+        List<Bannercontrol> bannercontrols = bannerMapper.selectByBanner(bannerStatus);
         //logger.info(messages+"1111111111111111");
         if (bannercontrols!=null){
             for (Bannercontrol b:bannercontrols){
@@ -101,6 +102,10 @@ public class BannerServiceImpl implements BannerService {
         Bannercontrol bannercontrol = new Bannercontrol();
         bannercontrol.setBannerUrl(bannerUrl);
         bannercontrol.setBannerPic(bannerPic);
+        bannercontrol.setBannerStatus(2);
+        Date date=new Date();
+        long timestamp=date.getTime();
+        bannercontrol.setBannerCreatetime(timestamp);
         int insert = bannerMapper.insert(bannercontrol);
         if (insert>0){
             return new Result(0,"添加成功",insert);
@@ -118,6 +123,13 @@ public class BannerServiceImpl implements BannerService {
     public Result updateBannerStatus(Integer bannerId, Integer bannerStatus) {
         if (bannerId==null||bannerId<=0){
             return new Result(-1,"id不能为空");
+        }
+        //bannerMapper.selectAll(bannerStatus);
+        if (bannerStatus==1){
+            List<Bannercontrol> bannercontrols = bannerMapper.selectByStatus(bannerStatus);
+            if (bannercontrols.size()>5){
+                return new Result(-1,"最多上架6个banner图");
+            }
         }
         Bannercontrol bannercontrol = bannerMapper.selectByPrimaryKey(bannerId);
 
@@ -164,6 +176,9 @@ public class BannerServiceImpl implements BannerService {
 
     public Result updateById(Integer bannerId, String bannerUrl, String bannerPic) {
         Bannercontrol bannercontrol = new Bannercontrol();
+        Date date=new Date();
+        long timestamp=date.getTime();
+        bannercontrol.setBannerUpdatetime(timestamp);
         bannercontrol.setBannerId(bannerId);
         bannercontrol.setBannerUrl(bannerUrl);
         bannercontrol.setBannerPic(bannerPic);
@@ -174,4 +189,12 @@ public class BannerServiceImpl implements BannerService {
             return new Result(-1,"编辑失败",i);
         }
     }
+
+    public PageInfo<Bannercontrol> findByPage(int currentPage, int pageSize) {
+        PageHelper.startPage(currentPage,pageSize);
+        List<Bannercontrol> bannercontrols = bannerMapper.selectAll();
+        PageInfo<Bannercontrol> pageInfo =new PageInfo<>(bannercontrols);
+        return pageInfo;
+    }
+
 }

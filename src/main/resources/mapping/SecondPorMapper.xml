@@ -76,7 +76,6 @@
   </select>
 
   <update id="updateSpareByKey" >
-
     <foreach collection="list"  item="var" separator=";">
       update second_por
       <set>

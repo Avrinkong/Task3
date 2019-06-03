@@ -46,4 +46,6 @@ public interface MessageMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Message record);
+
+    List<Message> selectByWorksName(String name);
 }

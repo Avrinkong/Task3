@@ -46,4 +46,6 @@ public interface ModelMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Model record);
+
+    List<Model> selectByModelName(String modelName);
 }

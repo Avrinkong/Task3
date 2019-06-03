@@ -1,8 +1,10 @@
 package com.back.chuilun.service.impl;
 
 import com.back.chuilun.dao.SecondPorMapper;
+import com.back.chuilun.dao.WorksMapper;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.SecondPor;
+import com.back.chuilun.entity.Works;
 import com.back.chuilun.service.SecondProService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -16,28 +18,35 @@ public class SecondProServiceImpl implements SecondProService {
 
     @Autowired
     private SecondPorMapper secondPorMapper;
+    @Autowired
+    private WorksMapper worksMapper;
 
     public Result add(String secName,String portfolioName) {
-        SecondPor secondPor = new SecondPor();
-        secondPor.setSecName(secName);
-        secondPor.setSecStatus(2);
-        secondPor.setPortfolioName(portfolioName);
-        Date date=new Date();
-        long timestamp=date.getTime();
+        List<SecondPor> secondPors = secondPorMapper.selectAll();
+        if (secondPors.size()>7){
+            return new Result(-1,"二级导航数量已达上限");
+        }else {
 
-        secondPor.setSecCreatetime(timestamp);
-        secondPor.setSecUpdatetime(timestamp);
-        int insert = secondPorMapper.insert(secondPor);
-        if (insert==0) {
-            return new Result(-1,"添加失败",insert);
-        }else if(insert>0){
-            return new Result(0,"添加成功",insert);
-        }else if (insert<0){
-            return new Result(1,"添加失败",insert);
+            SecondPor secondPor = new SecondPor();
+            secondPor.setPortfolioName("默认导航");
+            secondPor.setSecName(secName);
+            secondPor.setSecStatus(2);
+            secondPor.setPortfolioName(portfolioName);
+            Date date=new Date();
+            long timestamp=date.getTime();
+
+            secondPor.setSecCreatetime(timestamp);
+            secondPor.setSecUpdatetime(timestamp);
+            int insert = secondPorMapper.insert(secondPor);
+            if (insert==0) {
+                return new Result(-1,"添加失败",insert);
+            }else if(insert>0){
+                return new Result(0,"添加成功",insert);
+            }else if (insert<0){
+                return new Result(1,"添加失败",insert);
+            }
+            return new Result(2, "添加异常");
         }
-    return new Result(2, "添加异常");
-
-
     }
 
     @Override
@@ -99,13 +108,21 @@ public class SecondProServiceImpl implements SecondProService {
             return new Result(-1,"id不能为空");
         }
         SecondPor secondPor = secondPorMapper.selectByPrimaryKey(secondPorId);
-
-        if(secName!=null) {
-            secondPor.setSecName(secName);
+        List<Works> works = worksMapper.selectAll();
+        if (secondPor.getSecName().equals(secName)) {
+            if (secondPor.getSecName()!=null&&works.size()>0) {
+                for (Works works1:works){
+                    if (works1.getSecondPorName().equals(secName)){
+                        return  new Result(-1,"作品集有有下级作品,请先清空下级标题" );
+                    }
+                }
+            }
+        }else {
+            return new Result(-1,"id与作品名称不匹配");
         }
-        if (secondPor.getSecSpare()!=null&&secondPor.getSecSpare()!=secStatus){
-            if(secondPor.getSecSpare()==1){
-                secondPor.setSecSpare(secStatus);
+        if (secondPor.getSecStatus()!=null&&!secondPor.getSecStatus().equals(secStatus)){
+            if(secondPor.getSecStatus()==1){
+                secondPor.setSecStatus(secStatus);
                 Date date=new Date();
                 long timestamp=date.getTime();
                 secondPor.setSecUpdatetime(timestamp);
@@ -118,6 +135,9 @@ public class SecondProServiceImpl implements SecondProService {
                 }
             }else{
                 secondPor.setSecStatus(secStatus);
+                Date date=new Date();
+                long timestamp=date.getTime();
+                secondPor.setSecUpdatetime(timestamp);
                 int i = secondPorMapper.updateByPrimaryKey(secondPor);
                 if (i>0){
                     return new Result(0,"上架成功",i);

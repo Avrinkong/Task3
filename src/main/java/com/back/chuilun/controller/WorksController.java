@@ -33,15 +33,11 @@ public class WorksController {
     @ResponseBody
     public Result findWorks(String worksName, Integer wstatus){
         if (worksName!=null&&worksName.trim().equals("")){
-            if (wstatus!=null){
-                List<Works> all = worksService.findAll(worksName,wstatus);
-                if (all.size()>0) {
-                    return new Result(0, "success", all);
-                }else {
-                    return new Result(-1,"false");
-                }
+            List<Works> all = worksService.findAll(worksName,wstatus);
+            if (all.size()>0) {
+                return new Result(0, "success", all);
             }else {
-                return new Result(-1,"作品集上下架状态不能为空");
+                return new Result(-1,"false");
             }
         }else {
             return new Result(-1,"作品集名称不能为空");
@@ -115,6 +111,7 @@ public class WorksController {
                         if (worksPic!=null&&worksPic.trim().equals("")){
                             if (worksBintro!=null&&worksBintro.trim().equals("")){
                                 Works works = new Works();
+                                works.setSecondPorName("萌萌哒默认二级标题");
                                 works.setWorksName(worksName);
                                 works.setWorksIntro(worksIntro);
                                 works.setWorksMpic(worksMpic);

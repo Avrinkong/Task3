@@ -31,9 +31,9 @@ public class RoleController {
         if(roleName!=null&&!roleName.trim().equals("")){
             List all = roleService.findAll(roleName);
             if (all.size()>0) {
-                return new Result(0, "success", all);
+                return new Result(0, "查询成功", all);
             }else {
-                return new Result(-1,"false");
+                return new Result(-1,"查询失败");
             }
         }else {
             return new Result(-1,"角色名不能为空");

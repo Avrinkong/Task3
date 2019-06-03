@@ -37,7 +37,7 @@ public class WorkCllectionController {
                 if (all.size()>0) {
                     return new Result(0, "success", all);
                 }else {
-                    return new Result(-1,"false");
+                    return new Result(-1,"作品集名称不存在");
                 }
             }else {
                 return new Result(-1,"作品集上下状态不能为空");
@@ -69,13 +69,13 @@ public class WorkCllectionController {
                     Result result = wcmi.updatePortfolio(portfolioId, portfolioName, pstutsa);
                     return result;
                 }else {
-                    return new Result(-1,"工作室上下架不能为空");
+                    return new Result(-1,"作品集上下架不能为空");
                 }
             }else {
-                return new Result(-1,"工作室名称不能为空");
+                return new Result(-1,"作品集名称不能为空");
             }
         }else {
-            return new Result(-1,"工作室ID不能为空");
+            return new Result(-1,"作品集ID不能为空");
         }
     }
 

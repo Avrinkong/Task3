@@ -63,22 +63,13 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public List<Account> findAll(String accName, String roleName) {
         List<Account> list = new ArrayList<>();
-        List<Account> accounts = accountMapper.selectAll();
+        List<Account> accounts = accountMapper.selectByName(accName);
         //logger.info(messages+"1111111111111111");
         for (Account a:accounts){
-            if(roleName==null){
-                if(a.getAccName().equals(accName)){
+            if(roleName==null&&roleName.trim().equals("")){
                     list.add(a);
-                }
-            }else {
-                if(!a.getAccName().equals("")&&a.getAccName()!=null){
-                    if(a.getAccName().equals(accName)){
-                        if (a.getRoleName().equals(roleName)){
-                            list.add(a);
-                            // logger.info(message+"22222222222222");
-                        }
-                    }
-                }
+            }else  if (a.getRoleName().equals(roleName)){
+                list.add(a);
             }
         }
         return list;
@@ -129,6 +120,9 @@ public class AccountServiceImpl implements AccountService {
         Account account = accountMapper.selectByPrimaryKey(accId);
         if(account.getAccPassword().equals(oldpassword)){
             account.setAccPassword(newpassword);
+            Date date=new Date();
+            long timestamp=date.getTime();
+            account.setAccUpdatetime(timestamp);
             int i = accountMapper.updateByPrimaryKey(account);
             if(i>0){
                 return new Result(0,"修改成功",i);

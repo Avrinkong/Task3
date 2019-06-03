@@ -22,36 +22,42 @@ public class AccountController {
     private AccountService as;
     private Logger logger = Logger.getLogger(AccountController.class);
 
+    /**
+     * 根据用户名和密码进行登录验证操作
+     * @param username
+     * @param password
+     * @return
+     */
     @RequestMapping(value = "login",method = RequestMethod.POST)
     @ResponseBody
     public ModelAndView login(String username, String password) {
         ModelAndView model = new ModelAndView();
-        if(username!=null&&password!=null){
-            //logger.info(username+"AAA"+password);
-            Account accountByNamePwd = as.findAccountByNamePwd(username, password);
-            int accId = Math.toIntExact(accountByNamePwd.getAccId());
-             //logger.info("数字是"+accId);
-            //String s = JSON.toJSONString(accountByNamePwd);
-            if (accId == 1){
-                model.addObject("message","添加成功");
-                model.addObject(accountByNamePwd);
-                //String s = JSON.toJSONString(model);
-                model.setViewName("welcome");
-                model.setView(new MappingJackson2JsonView());
-                return model;
+        if (username!=null&&!username.trim().equals("")){
+            if (password!=null&&!password.trim().equals("")){
+                Account accountByNamePwd = as.findAccountByNamePwd(username, password);
+                int accId = Math.toIntExact(accountByNamePwd.getAccId());
+                if (accId == 1) {
+                    model.addObject("message", "添加成功");
+                    model.addObject(accountByNamePwd);
+                    //String s = JSON.toJSONString(model);
+                    model.setViewName("welcome");
+                    model.setView(new MappingJackson2JsonView());
+                    return model;
+                }else {
+                    model.addObject("message","登录失败");
+                    model.setViewName("login");
+                    model.addObject(accountByNamePwd);
+                    model.setView(new MappingJackson2JsonView());
+                    //String s = JSON.toJSONString(model);
+                    return model;
+                }
             }else {
-                model.addObject("message","添加失败");
-                model.setViewName("login");
-                model.addObject(accountByNamePwd);
-                model.setView(new MappingJackson2JsonView());
-                //String s = JSON.toJSONString(model);
-                return model;
+                model.addObject("密码错误","密码错误");
             }
         }else {
-            model.addObject("message","用户名或者密码为空");
+            model.addObject("用户名错误","用户名不存在");
         }
         return model;
-       //return accId;
     }
 
     @RequestMapping(value = "find",method = RequestMethod.GET)
@@ -68,9 +74,9 @@ public class AccountController {
         if (accName!=null&&!accName.trim().equals("")){
             List<Account> all = as.findAll(accName,roleName);
             if (all.size()>0) {
-                return new Result(0, "success", all);
+                return new Result(0, "查询成功", all);
             }else {
-                return new Result(-1,"false");
+                return new Result(-1,"没有符合要求的账户");
             }
         }else {
             return new Result(-1,"用户名不能为空");

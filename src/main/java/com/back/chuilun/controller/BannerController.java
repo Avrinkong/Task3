@@ -5,6 +5,8 @@ import com.alibaba.fastjson.JSONObject;
 import com.back.chuilun.entity.Bannercontrol;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.service.impl.BannerServiceImpl;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -24,6 +26,7 @@ public class BannerController {
     @RequestMapping(value = "find",method = RequestMethod.GET)
     @ResponseBody
     public Result findWorks(){
+        PageHelper.startPage(1,5);
         Result all = bannerService.findAll();
         return all;
     }
@@ -49,10 +52,11 @@ public class BannerController {
             JSONObject jsonObject1 = JSONObject.parseObject(jsonObject);
             List<Bannercontrol> list = JSON.parseArray(jsonObject1.getString("bannercontrol"),Bannercontrol.class);
             Result result = bannerService.sortBanner(list);
+            return result;
+        }else {
+            Result result = new Result(-1, "输入错误");
+            return result;
         }
-        Result result = new Result(-1,"输入错误");
-        return result;
-
     }
 
     @RequestMapping(value = "add",method = RequestMethod.POST)
@@ -62,12 +66,8 @@ public class BannerController {
         List<Bannercontrol> data = (List<Bannercontrol>) all.getData();
         if (bannerUrl!=null&&!bannerUrl.trim().equals("")){
             if (bannerPic!=null&&!bannerPic.trim().equals("")){
-                if (data.size()<7) {
                     Result add = bannerService.add(bannerUrl, bannerPic);
                     return add;
-                }else{
-                    return  new Result(-1,"banner图最多只能创建7个");
-                }
             }
             return  new Result(-1,"图片不能为空");
         }
@@ -116,5 +116,12 @@ public class BannerController {
         }
         Result result = new Result(-1,"Id不能为空");
         return result;
+    }
+
+    @RequestMapping(value = "pageinfo",method = RequestMethod.GET)
+    @ResponseBody
+    public PageInfo<Bannercontrol> findByPage(int currentPage,int pageSize){
+        PageInfo<Bannercontrol> info = bannerService.findByPage(currentPage,pageSize);
+        return info;
     }
 }

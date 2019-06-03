@@ -49,4 +49,6 @@ public interface AccountMapper {
     int updateByPrimaryKey(Account record);
 
     Account selectByNamePwd (@Param("accName") String accName, @Param("accPassword") String accPassword);
+
+    List<Account> selectByName(String accName);
 }

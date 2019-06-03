@@ -48,4 +48,10 @@ public interface BannercontrolMapper {
     int updateByPrimaryKey(Bannercontrol record);
 
     int updateSorByKey(List<Bannercontrol> list);
+
+    List<Bannercontrol> selectByBanner(Integer bannerStatus);
+
+    List<Bannercontrol> selectByStatus(Integer bannerStatus);
+
+    /* void selectAll(Integer bannerStatus);*/
 }

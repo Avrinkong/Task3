@@ -1,7 +1,9 @@
 package com.back.chuilun.service.impl;
 
+import com.back.chuilun.dao.SecondPorMapper;
 import com.back.chuilun.dao.WorksCllectionMapper;
 import com.back.chuilun.entity.Result;
+import com.back.chuilun.entity.SecondPor;
 import com.back.chuilun.entity.WorksCllection;
 import com.back.chuilun.service.WorksCllectionService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,27 +18,34 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
 
     @Autowired
     private WorksCllectionMapper wcm;
+    @Autowired
+    private SecondPorMapper secondPorMapper;
 
     @Override
     public Result add(Object object) {
-        WorksCllection wc= new WorksCllection();
-        wc.setPortfolioName((String) object);
-        wc.setPstatus(2);
-        Date date=new Date();
-        long timestamp=date.getTime();
+        List<WorksCllection> list = wcm.selectAll();
+        if (list.size()>7){
+            return new Result(-1,"作品集数量已达上限");
+        }else {
+            WorksCllection wc= new WorksCllection();
+            wc.setPortfolioName((String) object);
+            wc.setPstatus(2);
+            Date date=new Date();
+            long timestamp=date.getTime();
       /*  SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  //long类型转换为string 类型字符串
         String timeText=format.format(timestamp);*/
-        wc.setPcreateTime(timestamp);
-        wc.setPupdateTime(timestamp);
-        int insert = wcm.insert(wc);
-        if (insert==0) {
-            return new Result(-1,"添加失败",insert);
-        }else if(insert>0){
-            return new Result(0,"添加成功",insert);
-        }else if (insert<0){
-            return new Result(1,"添加失败",insert);
+            wc.setPcreateTime(timestamp);
+            wc.setPupdateTime(timestamp);
+            int insert = wcm.insert(wc);
+            if (insert==0) {
+                return new Result(-1,"添加失败",insert);
+            }else if(insert>0){
+                return new Result(0,"添加成功",insert);
+            }else if (insert<0){
+                return new Result(1,"添加失败",insert);
+            }
+            return new Result(2,"添加异常");
         }
-        return new Result(2,"添加异常");
     }
 
     @Override
@@ -77,17 +86,16 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
      * @param pstatus
      * @return list
      */
-    public List findAll(String portfolioName,Integer pstatus){
+    public List<WorksCllection> findAll(String portfolioName,Integer pstatus){
         List<WorksCllection> list = new ArrayList<>();
         List<WorksCllection> worksCllections = wcm.selectAll();
-        //logger.info(messages+"1111111111111111");
         for (WorksCllection w:worksCllections){
             if(pstatus==null){
-                if(w.getPortfolioName().equals(portfolioName)){
+                if(w.getPortfolioName().contains(portfolioName)){
                     list.add(w);
                 }
             }else {
-                if(w.getPortfolioName().equals(portfolioName)){
+                if(w.getPortfolioName().contains(portfolioName)){
                     if (w.getPstatus()==pstatus){
                         list.add(w);
                         // logger.info(message+"22222222222222");
@@ -110,11 +118,20 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
             return new Result(-1,"id不能为空");
         }
         WorksCllection worksCllection = wcm.selectByPrimaryKey(portfolioId);
-
-        if(portfolioName!=null) {
-            worksCllection.setPortfolioName(portfolioName);
+        List<SecondPor> secondPors = secondPorMapper.selectAll();
+        if (worksCllection.getPortfolioName().equals(portfolioName)){
+            if (worksCllection.getPortfolioName()!=null&&secondPors.size()>0) {
+                for (SecondPor secondPor:secondPors){
+                    if (secondPor.getPortfolioName().equals(portfolioName)){
+                        return  new Result(-1,"作品集有有下级作品,请先清空下级标题" );
+                    }
+                }
+            }
+        }else {
+            return new Result(-1,"id与作品名称不匹配");
         }
-        if (worksCllection.getPstatus()!=null&&worksCllection.getPstatus()!=pstutsa){
+
+        if (worksCllection.getPstatus()!=null&&!worksCllection.getPstatus().equals(pstutsa)){
                 if(worksCllection.getPstatus()==1){
                     worksCllection.setPstatus(pstutsa);
                     Date date=new Date();
@@ -185,4 +202,10 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
             return new Result(-1,"删除失败",i);
         }
     }
+
+    /*public List<WorksCllectSecondPor> findByPName() {
+        int i = wcm.selectByPName();
+        return i;
+    }*/
+
 }
