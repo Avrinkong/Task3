@@ -28,7 +28,7 @@ public class SecondProServiceImpl implements SecondProService {
         }else {
 
             SecondPor secondPor = new SecondPor();
-            secondPor.setPortfolioName("默认导航");
+            //secondPor.setPortfolioName("默认导航");
             secondPor.setSecName(secName);
             secondPor.setSecStatus(2);
             secondPor.setPortfolioName(portfolioName);
@@ -167,6 +167,17 @@ public class SecondProServiceImpl implements SecondProService {
     }
 
     public Result deleteById(Integer secondPorId){
+        List<Works> works = worksMapper.selectAll();
+        SecondPor secondPor1 = secondPorMapper.selectByPrimaryKey(secondPorId);
+        for (Works works1:works){
+            if (works1.getSecondPorName().equals(secondPor1.getSecName())){
+                return new Result(-1,"二级导航下有下级作品,无法删除");
+            }else {
+                if (secondPor1.getSecStatus()==1){
+                    return new Result(-1,"二级导航处于上架状态,无法删除");
+                }
+            }
+        }
         int i = secondPorMapper.deleteByPrimaryKey(secondPorId);
         if(i>0){
             return new Result(0,"删除成功",i);

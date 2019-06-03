@@ -4,6 +4,8 @@ import com.back.chuilun.dao.RoleMapper;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.Role;
 import com.back.chuilun.service.RoleService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -97,5 +99,12 @@ public class RoleServiceImpl implements RoleService {
         }else {
             return new Result(-1,"删除失败",i);
         }
+    }
+
+    public PageInfo<Role> findByPage(int currentPage, int pageSize) {
+        PageHelper.startPage(currentPage,pageSize);
+        List<Role> bannercontrols = roleMapper.selectAll();
+        PageInfo<Role> pageInfo =new PageInfo<>(bannercontrols);
+        return pageInfo;
     }
 }

@@ -110,6 +110,9 @@ public class StudioServiceImpl implements StudioService {
         if (studioEditor!=null){
             studio.setStudioEditor(studioEditor);
         }
+        Date date=new Date();
+        long timestamp=date.getTime();
+        studio.setStudioUpdatetime(timestamp);
         int i = studioMapper.updateByPrimaryKey(studio);
         if(i>0){
             return new Result(0,"编辑成功",i);

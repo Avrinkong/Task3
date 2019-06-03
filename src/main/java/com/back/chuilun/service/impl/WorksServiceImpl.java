@@ -4,6 +4,8 @@ import com.back.chuilun.dao.WorksMapper;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.Works;
 import com.back.chuilun.service.WorksService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -147,5 +149,12 @@ public class WorksServiceImpl implements WorksService {
     public Works findById(Integer worksId) {
         Works works = worksMapper.selectByPrimaryKey(worksId);
         return works;
+    }
+
+    public PageInfo<Works> findByPage(int currentPage, int pageSize) {
+        PageHelper.startPage(currentPage,pageSize);
+        List<Works> works = worksMapper.selectAll();
+        PageInfo<Works> pageInfo =new PageInfo<>(works);
+        return pageInfo;
     }
 }

@@ -2,6 +2,7 @@ package com.back.chuilun.service;
 
 import com.back.chuilun.entity.Account;
 import com.back.chuilun.entity.Result;
+import com.github.pagehelper.PageInfo;
 
 import java.util.List;
 
@@ -30,4 +31,6 @@ public interface AccountService {
      Result deleteById(Long accId);
 
      Result changePassword(Long accId, String oldpassword, String newpassword);
+
+    PageInfo<Account> findByPage(int currentPage, int pageSize);
 }

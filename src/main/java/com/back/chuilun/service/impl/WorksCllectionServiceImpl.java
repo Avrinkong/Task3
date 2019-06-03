@@ -32,8 +32,6 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
             wc.setPstatus(2);
             Date date=new Date();
             long timestamp=date.getTime();
-      /*  SimpleDateFormat format =  new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");  //long类型转换为string 类型字符串
-        String timeText=format.format(timestamp);*/
             wc.setPcreateTime(timestamp);
             wc.setPupdateTime(timestamp);
             int insert = wcm.insert(wc);
@@ -195,6 +193,17 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
     }
 
     public Result deleteById(Long portfolioId){
+        List<SecondPor> secondPors = secondPorMapper.selectAll();
+        WorksCllection worksCllection = wcm.selectByPrimaryKey(portfolioId);
+        for (SecondPor secondPor:secondPors){
+            if (secondPor.getPortfolioName().equals(worksCllection.getPortfolioName())){
+                return new Result(-1,"作品集下有下级作品,无法删除");
+            }else {
+                if (worksCllection.getPstatus()==1){
+                    return new Result(-1,"作品集处于上架状态,无法删除");
+                }
+            }
+        }
         int i = wcm.deleteByPrimaryKey(portfolioId);
         if(i>0){
             return new Result(0,"删除成功",i);

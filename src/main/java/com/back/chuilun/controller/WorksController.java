@@ -3,6 +3,7 @@ package com.back.chuilun.controller;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.Works;
 import com.back.chuilun.service.impl.WorksServiceImpl;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -65,7 +66,7 @@ public class WorksController {
             resultData.setMsg("用户未登录");
             return resultData;
         }*/
-        if (file!=null) {// 判断上传的文件是否为空
+        if (file!=null&&file.getSize()<5242880) {// 判断上传的文件是否为空
             String path=null;// 文件路径
             String type=null;// 文件类型
             String fileName=file.getOriginalFilename();// 文件原名称
@@ -95,7 +96,7 @@ public class WorksController {
                 return result;
             }
         }else {
-            result.setMessage("没有找到相对应的文件");
+            result.setMessage("没有找到相对应的文件或文件大小超出5M");
             return result;
         }
         return result;
@@ -104,8 +105,8 @@ public class WorksController {
     @RequestMapping(value = "add",method = RequestMethod.POST)
     @ResponseBody
     public Result addWorks(String worksName,String worksIntro,String worksMpic,String worksUrl,String worksPic,String worksBintro){
-        if (worksName!=null&&!worksName.trim().equals("")){
-            if (worksIntro!=null&&!worksIntro.trim().equals("")){
+        if (worksName!=null&&!worksName.trim().equals("")&&worksName.length()<=15){
+            if (worksIntro!=null&&!worksIntro.trim().equals("")&&worksIntro.length()<=300){
                 if (worksMpic!=null&&!worksMpic.trim().equals("")){
                     if (worksUrl!=null&&!worksUrl.trim().equals("")){
                         if (worksPic!=null&&worksPic.trim().equals("")){
@@ -136,7 +137,7 @@ public class WorksController {
                 return new Result(-1,"作品简介不能为空");
             }
         }else {
-            return new Result(-1,"作品集名称不能为空");
+            return new Result(-1,"作品名称不能为空或作品名称超过15字");
         }
       /* Date date=new Date();
        long timestamp=date.getTime();
@@ -219,5 +220,12 @@ public class WorksController {
        long timestamp=date.getTime();
        works.setWcreateTime(timestamp);
        works.setChangeTime(timestamp);*/
+    }
+
+    @RequestMapping(value = "pageinfo",method = RequestMethod.GET)
+    @ResponseBody
+    public PageInfo<Works> findByPage(int currentPage, int pageSize){
+        PageInfo<Works> info = worksService.findByPage(currentPage,pageSize);
+        return info;
     }
 }

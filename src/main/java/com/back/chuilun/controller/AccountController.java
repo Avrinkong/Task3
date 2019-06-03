@@ -3,6 +3,7 @@ package com.back.chuilun.controller;
 import com.back.chuilun.entity.Account;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.service.AccountService;
+import com.github.pagehelper.PageInfo;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -149,7 +150,7 @@ public class AccountController {
     public Result changePassword(Long accId,String oldpassword,String newpassword ){
         if (accId!=null){
             if (oldpassword!=null&&!oldpassword.trim().equals("")){
-                if (newpassword!=null&&!newpassword.trim().equals("")){
+                if (newpassword!=null&&!newpassword.trim().equals("")&&newpassword.length()<=6){
                     Result result = as.changePassword(accId,oldpassword,newpassword);
                     return result;
                 }
@@ -161,5 +162,12 @@ public class AccountController {
         }
         Result result = new Result(-1,"用户id不能为空");
         return result;
+    }
+
+    @RequestMapping(value = "pageinfo",method = RequestMethod.GET)
+    @ResponseBody
+    public PageInfo<Account> findByPage(int currentPage, int pageSize){
+        PageInfo<Account> info =as.findByPage(currentPage,pageSize);
+        return info;
     }
 }

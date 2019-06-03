@@ -3,6 +3,7 @@ package com.back.chuilun.controller;
 import com.back.chuilun.entity.Model;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.service.impl.ModelServiceImpl;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -94,6 +95,13 @@ public class ModelController {
             return result;
         }
         return new Result(-1,"模块id不能为空");
+    }
+
+    @RequestMapping(value = "pageinfo",method = RequestMethod.GET)
+    @ResponseBody
+    public PageInfo<Model> findByPage(int currentPage, int pageSize){
+        PageInfo<Model> info =modelService.findByPage(currentPage,pageSize);
+        return info;
     }
 
 }

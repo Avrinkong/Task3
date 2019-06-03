@@ -4,6 +4,8 @@ import com.back.chuilun.dao.ModelMapper;
 import com.back.chuilun.entity.Model;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.service.ModelService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -78,5 +80,12 @@ public class ModelServiceImpl implements ModelService {
         }else {
             return new Result(-1,"删除失败",i);
         }
+    }
+
+    public PageInfo<Model> findByPage(int currentPage, int pageSize) {
+        PageHelper.startPage(currentPage,pageSize);
+        List<Model> bannercontrols = modelMapper.selectAll();
+        PageInfo<Model> pageInfo =new PageInfo<>(bannercontrols);
+        return pageInfo;
     }
 }

@@ -4,6 +4,8 @@ import com.back.chuilun.dao.AccountMapper;
 import com.back.chuilun.entity.Account;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.service.AccountService;
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -82,12 +84,10 @@ public class AccountServiceImpl implements AccountService {
         account.setAccCreatetime(timestamp);
         account.setAccUpdatetime(timestamp);
         int insert = accountMapper.insert(account);
-        if (insert==0) {
+        if (insert<=0) {
             return new Result(-1,"添加失败",insert);
         }else if(insert>0){
             return new Result(0,"添加成功",insert);
-        }else if (insert<0){
-            return new Result(1,"添加失败",insert);
         }
         return new Result(2,"添加异常");
     }
@@ -131,5 +131,13 @@ public class AccountServiceImpl implements AccountService {
             }
         }
         return new Result(-1,"旧密码输入错误");
+    }
+
+    @Override
+    public PageInfo<Account> findByPage(int currentPage, int pageSize) {
+        PageHelper.startPage(currentPage,pageSize);
+        List<Account> bannercontrols = accountMapper.selectAll();
+        PageInfo<Account> pageInfo =new PageInfo<>(bannercontrols);
+        return pageInfo;
     }
 }

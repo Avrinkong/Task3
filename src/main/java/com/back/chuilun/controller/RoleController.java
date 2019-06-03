@@ -3,6 +3,7 @@ package com.back.chuilun.controller;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.Role;
 import com.back.chuilun.service.impl.RoleServiceImpl;
+import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -116,6 +117,13 @@ public class RoleController {
         }else {
             return new Result(-1,"角色ID不能为空");
         }
+    }
+
+    @RequestMapping(value = "pageinfo",method = RequestMethod.GET)
+    @ResponseBody
+    public PageInfo<Role> findByPage(int currentPage, int pageSize){
+        PageInfo<Role> info =roleService.findByPage(currentPage,pageSize);
+        return info;
     }
 
 }
