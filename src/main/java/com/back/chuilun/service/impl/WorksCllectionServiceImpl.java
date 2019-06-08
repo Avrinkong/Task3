@@ -5,6 +5,7 @@ import com.back.chuilun.dao.WorksCllectionMapper;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.SecondPor;
 import com.back.chuilun.entity.WorksCllection;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.WorksCllectionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,7 +26,7 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
     public Result add(Object object) {
         List<WorksCllection> list = wcm.selectAll();
         if (list.size()>7){
-            return new Result(-1,"作品集数量已达上限");
+            throw  new BusinessException("作品集数量已达上限");
         }else {
             WorksCllection wc= new WorksCllection();
             wc.setPortfolioName((String) object);
@@ -36,13 +37,13 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
             wc.setPupdateTime(timestamp);
             int insert = wcm.insert(wc);
             if (insert==0) {
-                return new Result(-1,"添加失败",insert);
+                throw  new BusinessException("作品集添加失败");
             }else if(insert>0){
                 return new Result(0,"添加成功",insert);
             }else if (insert<0){
-                return new Result(1,"添加失败",insert);
+                throw  new BusinessException("作品集添加失败");
             }
-            return new Result(2,"添加异常");
+            throw  new BusinessException("添加异常");
         }
     }
 
@@ -73,7 +74,7 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
             return  new Result(0,"进入页面成功",worksCllections);
         }else {
 
-            return new Result(-1,"进入页面失败",worksCllections);
+            throw  new BusinessException("进入页面失败");
         }
 
     }
@@ -113,7 +114,7 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
      */
     public Result updatePortfolio(Long portfolioId,String portfolioName,Integer pstutsa){
         if (portfolioId==null||portfolioId<=0){
-            return new Result(-1,"id不能为空");
+            throw  new BusinessException("id不能为空");
         }
         WorksCllection worksCllection = wcm.selectByPrimaryKey(portfolioId);
         List<SecondPor> secondPors = secondPorMapper.selectAll();
@@ -121,12 +122,12 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
             if (worksCllection.getPortfolioName()!=null&&secondPors.size()>0) {
                 for (SecondPor secondPor:secondPors){
                     if (secondPor.getPortfolioName().equals(portfolioName)){
-                        return  new Result(-1,"作品集有有下级作品,请先清空下级标题" );
+                        throw  new BusinessException("作品集有有下级作品,请先清空下级标题" );
                     }
                 }
             }
         }else {
-            return new Result(-1,"id与作品名称不匹配");
+            throw  new BusinessException("id与作品名称不匹配");
         }
 
         if (worksCllection.getPstatus()!=null&&!worksCllection.getPstatus().equals(pstutsa)){
@@ -138,24 +139,35 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
 
                     int i = wcm.updateByPrimaryKey(worksCllection);
                     if (i>0){
+                        int j =1;
+                        pstutsa = 1;
+                        List<WorksCllection> worksCllections = wcm.selectByStatus(pstutsa);
+                        for (WorksCllection worksCllection1:worksCllections){
+                            worksCllection1.setPortfolioSpare(j);
+                            j++;
+                        }
+                        wcm.updateSpareByKey(worksCllections);
                         return new Result(0,"下架成功",i);
                     }else {
-                        return new Result(-1,"下架失败",i);
+                        throw  new BusinessException("下架失败");
                     }
                 }else{
                     worksCllection.setPstatus(pstutsa);
                     int i = wcm.updateByPrimaryKey(worksCllection);
                     if (i>0){
+                        List<WorksCllection> worksCllections = wcm.selectByStatus(pstutsa);
+                        worksCllection.setPortfolioSpare(worksCllections.size());
+                        wcm.updateByPrimaryKey(worksCllection);
                         return new Result(0,"上架成功",i);
                     }else {
-                        return new Result(-1,"上架失败",i);
+                        throw  new BusinessException("上架失败");
                     }
                 }
             }else{
                 if(pstutsa==1){
-                    return new Result(-1,"作品集已上架，不需要上架");
+                    throw  new BusinessException("作品集已上架，不需要上架");
                 }else {
-                    return new Result(-1,"作品集已下架，不需要下架");
+                    throw  new BusinessException("作品集已下架，不需要下架");
                 }
             }
     }
@@ -170,7 +182,7 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
         if(i>0){
             return new Result(0,"设置成功",i);
         }else {
-            return new Result(-1,"设置失败",i);
+            throw  new BusinessException("设置失败");
         }
     }
 
@@ -188,7 +200,7 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
         if(i>0){
             return new Result(0,"编辑成功",i);
         }else {
-            return new Result(-1,"编辑失败",i);
+            throw  new BusinessException("编辑失败");
         }
     }
 
@@ -197,10 +209,10 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
         WorksCllection worksCllection = wcm.selectByPrimaryKey(portfolioId);
         for (SecondPor secondPor:secondPors){
             if (secondPor.getPortfolioName().equals(worksCllection.getPortfolioName())){
-                return new Result(-1,"作品集下有下级作品,无法删除");
+                throw  new BusinessException("作品集下有下级作品,无法删除");
             }else {
                 if (worksCllection.getPstatus()==1){
-                    return new Result(-1,"作品集处于上架状态,无法删除");
+                    throw  new BusinessException("作品集处于上架状态,无法删除");
                 }
             }
         }
@@ -208,7 +220,7 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
         if(i>0){
             return new Result(0,"删除成功",i);
         }else {
-            return new Result(-1,"删除失败",i);
+            throw  new BusinessException("删除失败");
         }
     }
 

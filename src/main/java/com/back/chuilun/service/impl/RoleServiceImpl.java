@@ -3,6 +3,7 @@ package com.back.chuilun.service.impl;
 import com.back.chuilun.dao.RoleMapper;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.Role;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.RoleService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -28,7 +29,7 @@ public class RoleServiceImpl implements RoleService {
         if(i>0){
             return new Result(0,"添加成功",i);
         }else {
-            return new Result(-1,"添加失败",i);
+            throw  new BusinessException("添加失败");
         }
     }
 
@@ -49,7 +50,7 @@ public class RoleServiceImpl implements RoleService {
             return  new Result(0,"进入页面成功",roles);
         }else {
 
-            return new Result(-1,"进入页面失败",roles);
+            throw  new BusinessException("进入页面失败");
         }
     }
 
@@ -63,32 +64,11 @@ public class RoleServiceImpl implements RoleService {
         Date date=new Date();
         long timestamp=date.getTime();
         role.setRoleCreatetime(timestamp);
-        if (role.getRoleMessagestatus()==null||(role.getRoleMessagestatus()<=0&&role.getRoleMessagestatus()>3)){
-            role.setRoleMessagestatus(1);
-        }
-        if (role.getRolePortfolio()==null||role.getRolePortfolio()<=0&&role.getRolePortfolio()>3){
-            role.setRolePortfolio(1);
-        }
-        if (role.getRoleSecpotstatus()==null||role.getRoleSecpotstatus()<=0&&role.getRoleSecpotstatus()>3){
-            role.setRoleSecpotstatus(1);
-        }
-        if (role.getRoleBannerstatus()==null||role.getRoleBannerstatus()<=0&&role.getRoleBannerstatus()>3){
-            role.setRoleBannerstatus(1);
-        }
-        if (role.getRoleWroksstatus()==null||role.getRoleWroksstatus()<=0&&role.getRoleWroksstatus()>3){
-            role.setRoleWroksstatus(1);
-        }
-        if (role.getRoleStudiostatus()==null||role.getRoleStudiostatus()<=0&&role.getRoleStudiostatus()>3){
-            role.setRoleStudiostatus(1);
-        }
-        if (role.getRoleRoadstatus()==null||role.getRoleRoadstatus()<=0&&role.getRoleRoadstatus()>3){
-            role.setRoleRoadstatus(1);
-        }
         int i = roleMapper.updateByPrimaryKey(role);
         if (i>0){
-            return new Result(0,"添加成功",i);
+            return new Result(0,"角色编辑成功",i);
         }else {
-            return new Result(-1,"添加失败",i);
+            throw  new BusinessException("角色编辑失败");
         }
     }
 
@@ -97,7 +77,7 @@ public class RoleServiceImpl implements RoleService {
         if(i>0){
             return new Result(0,"删除成功",i);
         }else {
-            return new Result(-1,"删除失败",i);
+            throw  new BusinessException("角色删除失败");
         }
     }
 

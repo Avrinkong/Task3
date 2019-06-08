@@ -75,7 +75,15 @@
     order by sec_spare
   </select>
 
-  <update id="updateSpareByKey" >
+    <select id="selectByStatus" resultType="com.back.chuilun.entity.SecondPor">
+      select second_por_id, sec_name, portfolio_name, sec_status, sec_createtime, sec_updatetime,
+    sec_editor, sec_createman, sec_spare
+    from second_por
+    where sec_status=#{secStatus}
+    order by sec_spare
+    </select>
+
+    <update id="updateSpareByKey" >
     <foreach collection="list"  item="var" separator=";">
       update second_por
       <set>

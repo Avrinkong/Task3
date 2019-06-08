@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.SecondPor;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.impl.SecondProServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -38,13 +39,13 @@ public class SecondProController {
                 if (all.size()>0) {
                     return new Result(0, "success", all);
                 }else {
-                    return new Result(-1,"false");
+                    throw  new BusinessException("false");
                 }
             }else {
-                return new Result(-1,"二级标题状态为空");
+                throw  new BusinessException("二级标题状态为空");
             }
         }else {
-            return new Result(-1,"二级标题名不能为空");
+            throw  new BusinessException("二级标题名不能为空");
         }
     }
 
@@ -57,7 +58,7 @@ public class SecondProController {
             Result result = secondProService.sortSecondPor(list);
             return result;
         }else {
-            return new Result(-1,"参数不能为空");
+            throw  new BusinessException("参数不能为空");
         }
     }
 
@@ -69,10 +70,10 @@ public class SecondProController {
                 Result add = secondProService.add(secName,portfolioName);
                 return add;
             }else {
-                return new Result(-1,"导航不能为空");
+                throw  new BusinessException("导航不能为空");
             }
         }else {
-            return new Result(-1,"二级标题不能为空");
+            throw  new BusinessException("二级标题不能为空");
         }
     }
 
@@ -81,17 +82,17 @@ public class SecondProController {
     public Result updatePortfolio(Integer secondPorId,String secName,Integer secStatus){
         if (secondPorId!=null){
             if (secName!=null&&!secName.trim().equals("")){
-                if(secStatus!=null){
+                if(secStatus!=null&&secStatus>0&&secStatus<3){
                     Result result = secondProService.updateSecondPro(secondPorId, secName, secStatus);
                     return result;
                 }else {
-                    return new Result(-1,"二级标题上下架不能为空");
+                    throw  new BusinessException("二级标题上下架状态错误");
                 }
             }else {
-                return new Result(-1,"二级标题名称不能为空");
+                throw  new BusinessException("二级标题名称不能为空");
             }
         }else {
-            return new Result(-1,"二级标题ID不能为空");
+            throw  new BusinessException("二级标题ID不能为空");
         }
     }
 
@@ -103,10 +104,10 @@ public class SecondProController {
                 Result result = secondProService.updateById(secondPorId, secName);
                 return result;
             }else {
-                return new Result(-1,"二级标题名称不能为空");
+                throw  new BusinessException("二级标题名称不能为空");
             }
         }else {
-            return new Result(-1,"二级标题ID不能为空");
+            throw  new BusinessException("二级标题ID不能为空");
         }
     }
 
@@ -117,7 +118,7 @@ public class SecondProController {
             Result result = secondProService.deleteById(secondPorId);
             return result;
         }else {
-            return new Result(-1,"二级标题不能为空");
+            throw  new BusinessException("二级标题不能为空");
         }
     }
 }

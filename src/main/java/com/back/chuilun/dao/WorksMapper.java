@@ -46,4 +46,8 @@ public interface WorksMapper {
      * @mbg.generated
      */
     int updateByPrimaryKey(Works record);
+
+    List<Works> selectByName(String keyword);
+
+    List<Works> selectByIntro(String keyword);
 }

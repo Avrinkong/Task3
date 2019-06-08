@@ -40,8 +40,8 @@ public class GlobalExceptionHandler {
     @ResponseBody
     Result handleBusinessException(BusinessException e){
         LOGGER.error(e.getMessage(), e);
-
         Result result = new Result<>();
+        result.setCode(-1);
         result.setMessage(e.getMessage());
         return result;
     }
@@ -57,7 +57,7 @@ public class GlobalExceptionHandler {
         LOGGER.error(e.getMessage(), e);
 
         Result result = new Result<>();
-        result.setMessage("操作失败！");
+        result.setMessage("未知异常");
         return result;
     }
 }

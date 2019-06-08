@@ -48,4 +48,6 @@ public interface SecondPorMapper {
     int updateByPrimaryKey(SecondPor record);
 
     int updateSpareByKey(List<SecondPor> secondPor);
+
+    List<SecondPor> selectByStatus(Integer secStatus);
 }

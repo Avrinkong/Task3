@@ -26,7 +26,7 @@ public class Visit {
      *
      * @mbg.generated
      */
-    private Long visitIp;
+    private String visitIp;
 
     /**
      *
@@ -102,7 +102,7 @@ public class Visit {
      *
      * @mbg.generated
      */
-    public Long getVisitIp() {
+    public String getVisitIp() {
         return visitIp;
     }
 
@@ -114,7 +114,7 @@ public class Visit {
      *
      * @mbg.generated
      */
-    public void setVisitIp(Long visitIp) {
+    public void setVisitIp(String visitIp) {
         this.visitIp = visitIp;
     }
 

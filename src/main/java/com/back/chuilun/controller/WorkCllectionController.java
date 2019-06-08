@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.WorksCllection;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.impl.WorksCllectionServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,13 +38,13 @@ public class WorkCllectionController {
                 if (all.size()>0) {
                     return new Result(0, "success", all);
                 }else {
-                    return new Result(-1,"作品集名称不存在");
+                    throw  new BusinessException("作品集名称不存在");
                 }
             }else {
-                return new Result(-1,"作品集上下状态不能为空");
+                throw  new BusinessException("作品集上下状态不能为空");
             }
         }else {
-            return new Result(-1,"作品集名称不能为空");
+            throw  new BusinessException("作品集名称不能为空");
         }
     }
 
@@ -55,7 +56,7 @@ public class WorkCllectionController {
             Result add = wcmi.add(portfolioName);
             return add;
         }else {
-            return new Result(-1,"作品集名称不能为空");
+            throw  new BusinessException("作品集名称不能为空");
         }
 
     }
@@ -65,17 +66,17 @@ public class WorkCllectionController {
     public Result updatePortfolio(Long portfolioId,String portfolioName,Integer pstutsa){
         if (portfolioId!=null){
             if (portfolioName!=null&&!portfolioName.trim().equals("")){
-                if (pstutsa!=null){
+                if (pstutsa!=null&&pstutsa>0&&pstutsa<3){
                     Result result = wcmi.updatePortfolio(portfolioId, portfolioName, pstutsa);
                     return result;
                 }else {
-                    return new Result(-1,"作品集上下架不能为空");
+                    throw  new BusinessException("作品集上下架错误");
                 }
             }else {
-                return new Result(-1,"作品集名称不能为空");
+                throw  new BusinessException("作品集名称不能为空");
             }
         }else {
-            return new Result(-1,"作品集ID不能为空");
+            throw  new BusinessException("作品集ID不能为空");
         }
     }
 
@@ -89,7 +90,7 @@ public class WorkCllectionController {
             Result result = wcmi.sortPortfolio(list);
             return result;
         }else {
-            return new Result(-1,"参数不能为空");
+            throw  new BusinessException("参数不能为空");
         }
     }
 
@@ -102,10 +103,10 @@ public class WorkCllectionController {
                 Result result = wcmi.updateById(portfolioId, portfolioName);
                 return result;
             }else {
-                return new Result(-1,"工作室名称不能为空");
+                throw  new BusinessException("工作室名称不能为空");
             }
         }else {
-            return new Result(-1,"工作室ID不能为空");
+            throw  new BusinessException("工作室ID不能为空");
         }
     }
 
@@ -116,7 +117,7 @@ public class WorkCllectionController {
             Result result = wcmi.deleteById(portfolioId);
             return result;
         }else {
-            return new Result(-1,"工作室ID不能为空");
+            throw  new BusinessException("工作室ID不能为空");
         }
     }
 }

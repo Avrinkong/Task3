@@ -3,11 +3,13 @@ package com.back.chuilun.service.impl;
 import com.back.chuilun.dao.WorksMapper;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.Works;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.WorksService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.ArrayList;
 import java.util.Date;
@@ -23,6 +25,10 @@ public class WorksServiceImpl implements WorksService {
     public Result add(Object object) {
         Works works = (Works) object;
         //works.setWorksName((String)object);
+        List<Works> list = worksMapper.selectByName(works.getWorksName());
+        if (list.size()!=0){
+            throw  new BusinessException("该作品名称已存在");
+        }
         works.setWstatus(2);
         Date date=new Date();
         long timestamp=date.getTime();
@@ -32,13 +38,13 @@ public class WorksServiceImpl implements WorksService {
         works.setChangeTime(timestamp);
         int insert = worksMapper.insert(works);
         if (insert==0) {
-            return new Result(-1,"添加失败",insert);
+            throw  new BusinessException("作品添加失败");
         }else if(insert>0){
-            return new Result(0,"添加成功",insert);
+            return new Result(0,"作品添加成功",insert);
         }else if (insert<0){
-            return new Result(1,"添加失败",insert);
+            throw  new BusinessException("作品添加失败");
         }
-        return new Result(2,"添加异常");
+        throw  new BusinessException("作品添加异常");
     }
 
     @Override
@@ -51,7 +57,7 @@ public class WorksServiceImpl implements WorksService {
         if(i>0){
             return new Result(0,"删除成功",i);
         }else {
-            return new Result(-1,"删除失败",i);
+            throw  new BusinessException("删除失败");
         }
     }
 
@@ -65,7 +71,7 @@ public class WorksServiceImpl implements WorksService {
         if(i>0){
             return new Result(0,"编辑成功",i);
         }else {
-            return new Result(-1,"编辑失败",i);
+            throw  new BusinessException("编辑失败");
         }
     }
 
@@ -81,7 +87,7 @@ public class WorksServiceImpl implements WorksService {
             return  new Result(0,"进入页面成功",works);
         }else {
 
-            return new Result(-1,"进入页面失败",works);
+            throw  new BusinessException("进入页面失败");
         }
     }
 
@@ -126,7 +132,7 @@ public class WorksServiceImpl implements WorksService {
                 if (i>0){
                     return new Result(0,"下架成功",i);
                 }else {
-                    return new Result(-1,"下架失败",i);
+                    throw  new BusinessException("下架失败");
                 }
             }else{
                 works.setWstatus(wstatus);
@@ -134,14 +140,14 @@ public class WorksServiceImpl implements WorksService {
                 if (i>0){
                     return new Result(0,"上架成功",i);
                 }else {
-                    return new Result(-1,"上架失败",i);
+                    throw  new BusinessException("上架失败");
                 }
             }
         }else{
             if(wstatus==1){
-                return new Result(-1,"作品集已上架，不需要上架");
+                throw  new BusinessException("作品集已上架，不需要上架");
             }else {
-                return new Result(-1,"作品集已下架，不需要下架");
+                throw  new BusinessException("作品集已下架，不需要下架");
             }
         }
     }
@@ -156,5 +162,25 @@ public class WorksServiceImpl implements WorksService {
         List<Works> works = worksMapper.selectAll();
         PageInfo<Works> pageInfo =new PageInfo<>(works);
         return pageInfo;
+    }
+
+    public Result findWorkByNI(@RequestParam("keyword") String keyword) {
+        if (keyword!=null&&!keyword.trim().equals("")){
+            List<Works> listname = worksMapper.selectByName(keyword);
+           // List<Works> listintro = worksMapper.selectByIntro(keyword);
+           /* System.out.println("通过简介查询"+listintro);
+            Set<Works> set = new HashSet<>(listname);
+            set.addAll(listintro);
+            List<Works> lisette = new ArrayList<>(set);*/
+            /*lisette.retainAll(listintro);
+            listname.removeAll(lisette);
+            listintro.removeAll(lisette);
+            List<Works> list = new ArrayList<Works>();
+            list.addAll(listintro);
+            list.addAll(listname);*/
+            return new Result(0,"查询成功",listname);
+        }else {
+            throw  new BusinessException("传入值不能为空");
+        }
     }
 }

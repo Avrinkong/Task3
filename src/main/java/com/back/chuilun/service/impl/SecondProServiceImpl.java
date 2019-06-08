@@ -5,6 +5,7 @@ import com.back.chuilun.dao.WorksMapper;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.SecondPor;
 import com.back.chuilun.entity.Works;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.SecondProService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -24,7 +25,7 @@ public class SecondProServiceImpl implements SecondProService {
     public Result add(String secName,String portfolioName) {
         List<SecondPor> secondPors = secondPorMapper.selectAll();
         if (secondPors.size()>7){
-            return new Result(-1,"二级导航数量已达上限");
+            throw  new BusinessException("二级导航数量已达上限");
         }else {
 
             SecondPor secondPor = new SecondPor();
@@ -39,13 +40,13 @@ public class SecondProServiceImpl implements SecondProService {
             secondPor.setSecUpdatetime(timestamp);
             int insert = secondPorMapper.insert(secondPor);
             if (insert==0) {
-                return new Result(-1,"添加失败",insert);
+                throw  new BusinessException("添加失败");
             }else if(insert>0){
                 return new Result(0,"添加成功",insert);
             }else if (insert<0){
-                return new Result(1,"添加失败",insert);
+                throw  new BusinessException("添加失败");
             }
-            return new Result(2, "添加异常");
+            throw  new BusinessException("添加异常");
         }
     }
 
@@ -98,14 +99,14 @@ public class SecondProServiceImpl implements SecondProService {
         if(i>0){
             return new Result(0,"设置成功",i);
         }else {
-            return new Result(-1,"设置失败",i);
+            throw  new BusinessException("设置失败");
         }
     }
 
 
     public Result updateSecondPro(Integer secondPorId,String secName,Integer secStatus){
         if (secondPorId==null||secondPorId<=0){
-            return new Result(-1,"id不能为空");
+            throw  new BusinessException("id不能为空");
         }
         SecondPor secondPor = secondPorMapper.selectByPrimaryKey(secondPorId);
         List<Works> works = worksMapper.selectAll();
@@ -113,12 +114,12 @@ public class SecondProServiceImpl implements SecondProService {
             if (secondPor.getSecName()!=null&&works.size()>0) {
                 for (Works works1:works){
                     if (works1.getSecondPorName().equals(secName)){
-                        return  new Result(-1,"作品集有有下级作品,请先清空下级标题" );
+                        throw  new BusinessException("作品集有有下级作品,请先清空下级标题" );
                     }
                 }
             }
         }else {
-            return new Result(-1,"id与作品名称不匹配");
+            throw  new BusinessException("id与作品名称不匹配");
         }
         if (secondPor.getSecStatus()!=null&&!secondPor.getSecStatus().equals(secStatus)){
             if(secondPor.getSecStatus()==1){
@@ -129,9 +130,16 @@ public class SecondProServiceImpl implements SecondProService {
 
                 int i = secondPorMapper.updateByPrimaryKey(secondPor);
                 if (i>0){
+                    int j =1;
+                    secStatus = 1;
+                    List<SecondPor> secondPors = secondPorMapper.selectByStatus(secStatus);
+                    for (SecondPor secondPor1:secondPors){
+                        secondPor1.setSecSpare(j);
+                        j++;
+                    }
                     return new Result(0,"下架成功",i);
                 }else {
-                    return new Result(-1,"下架失败",i);
+                    throw  new BusinessException("下架失败");
                 }
             }else{
                 secondPor.setSecStatus(secStatus);
@@ -140,16 +148,19 @@ public class SecondProServiceImpl implements SecondProService {
                 secondPor.setSecUpdatetime(timestamp);
                 int i = secondPorMapper.updateByPrimaryKey(secondPor);
                 if (i>0){
+                    List<SecondPor> secondPors = secondPorMapper.selectByStatus(secStatus);
+                    secondPor.setSecSpare(secondPors.size());
+                    secondPorMapper.updateByPrimaryKey(secondPor);
                     return new Result(0,"上架成功",i);
                 }else {
-                    return new Result(-1,"上架失败",i);
+                    throw  new BusinessException("上架失败");
                 }
             }
         }else{
             if(secStatus==1){
-                return new Result(-1,"作品集已上架，不需要上架");
+                throw  new BusinessException("作品集已上架，不需要上架");
             }else {
-                return new Result(-1,"作品集已下架，不需要下架");
+                throw  new BusinessException("作品集已下架，不需要下架");
             }
         }
     }
@@ -162,7 +173,7 @@ public class SecondProServiceImpl implements SecondProService {
         if(i>0){
             return new Result(0,"编辑成功",i);
         }else {
-            return new Result(-1,"编辑失败",i);
+            throw  new BusinessException("编辑失败");
         }
     }
 
@@ -171,10 +182,10 @@ public class SecondProServiceImpl implements SecondProService {
         SecondPor secondPor1 = secondPorMapper.selectByPrimaryKey(secondPorId);
         for (Works works1:works){
             if (works1.getSecondPorName().equals(secondPor1.getSecName())){
-                return new Result(-1,"二级导航下有下级作品,无法删除");
+                throw  new BusinessException("二级导航下有下级作品,无法删除");
             }else {
                 if (secondPor1.getSecStatus()==1){
-                    return new Result(-1,"二级导航处于上架状态,无法删除");
+                    throw  new BusinessException("二级导航处于上架状态,无法删除");
                 }
             }
         }
@@ -182,7 +193,7 @@ public class SecondProServiceImpl implements SecondProService {
         if(i>0){
             return new Result(0,"删除成功",i);
         }else {
-            return new Result(-1,"删除失败",i);
+            throw  new BusinessException("删除失败");
         }
     }
 }

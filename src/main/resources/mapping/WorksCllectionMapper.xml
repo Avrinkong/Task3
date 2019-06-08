@@ -106,11 +106,19 @@
     order by portfolio_spare
   </select>
 
-  <!--<select id="selectByPName" resultMap="BaseResultMap">
-    select *
-    from
-    works_cllection,second_por
-    INNER JOIN second_por on works_cllection.portfolio_name=second_por.portfolio_name
-    where works_cllection.portfolio_name=#{portfolioName}
-  </select>-->
+    <select id="selectByStatus" resultType="com.back.chuilun.entity.WorksCllection">
+      select portfolio_id, portfolio_name, pstatus, pcreate_time, pupdate_time, poreditor,
+    portfolio_updateman, portfolio_spare
+    from works_cllection
+    where pstatus=#{pstutsa}
+    order by portfolio_spare
+    </select>
+
+    <!--<select id="selectByPName" resultMap="BaseResultMap">
+      select *
+      from
+      works_cllection,second_por
+      INNER JOIN second_por on works_cllection.portfolio_name=second_por.portfolio_name
+      where works_cllection.portfolio_name=#{portfolioName}
+    </select>-->
 </mapper>

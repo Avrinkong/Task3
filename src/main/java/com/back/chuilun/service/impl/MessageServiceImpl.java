@@ -3,6 +3,7 @@ package com.back.chuilun.service.impl;
 import com.back.chuilun.dao.MessageMapper;
 import com.back.chuilun.entity.Message;
 import com.back.chuilun.entity.Result;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.MessageService;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +29,9 @@ public class MessageServiceImpl implements MessageService {
     public Result delete(Long number) {
         int i = messageMapper.deleteByPrimaryKey(number);
         if (i==1){//删除行数为1行，代表删除成功
-            return  new Result(1,"删除成功");
+            return  new Result(0,"删除成功");
         }else {
-            return new Result(0, "删除失败");
+            throw  new BusinessException("删除失败");
         }
     }
 
@@ -83,11 +84,11 @@ public class MessageServiceImpl implements MessageService {
      */
     public Result editMessage(Long messageId){
         Message message = messageMapper.selectByPrimaryKey(messageId);
-        String msg = message.getMessage();
-        if(msg==null){//如果留言为空
-            return  new Result(-1,"没有回复",msg);
+        //String msg = message.getMessage();
+        if(message==null){//如果留言为空
+            throw  new BusinessException("没有回复");
         }else {
-            return  new Result(0,"回复显示正常",msg);
+            return  new Result(0,"回复显示正常",message);
         }
 
     }
@@ -105,9 +106,9 @@ public class MessageServiceImpl implements MessageService {
         Message message = messageMapper.selectByPrimaryKey(messageId);
         if(message.getMstatus()==mstatus){//根据ID查询出的对象状态码和传入对象一致
             if (mstatus==1){//已经为精选留言状态
-                return new Result(-1,"目前为精选留言状态，请勿重复设置");
+                throw  new BusinessException("目前为精选留言状态，请勿重复设置");
             }else {//已经为非精选留言状态
-                return new Result(-1,"目前未非精选留言状态，请勿重复设置");
+                throw  new BusinessException("目前未非精选留言状态，请勿重复设置");
             }
         }else {//查询出对象和传入对象状态码不一致
             message.setMstatus(mstatus); //将将要设置的对象码传入对象
@@ -119,7 +120,7 @@ public class MessageServiceImpl implements MessageService {
         if (i==1) {//更新成功
             return new Result(0, "设置成功");
         }else {//更新失败
-            return new Result(1, "设置异常");
+            throw  new BusinessException("设置异常");
         }
     }
 
@@ -135,7 +136,7 @@ public class MessageServiceImpl implements MessageService {
         if (i==1) {//更新成功
             return new Result(0, "更新成功");
         }else {//更新失败
-            return new Result(1, "更新失败");
+            throw  new BusinessException("更新失败");
         }
     }
 }

@@ -3,6 +3,7 @@ package com.back.chuilun.service.impl;
 import com.back.chuilun.dao.AccountMapper;
 import com.back.chuilun.entity.Account;
 import com.back.chuilun.entity.Result;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.AccountService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -85,11 +86,11 @@ public class AccountServiceImpl implements AccountService {
         account.setAccUpdatetime(timestamp);
         int insert = accountMapper.insert(account);
         if (insert<=0) {
-            return new Result(-1,"添加失败",insert);
+            throw  new BusinessException("添加失败");
         }else if(insert>0){
             return new Result(0,"添加成功",insert);
         }
-        return new Result(2,"添加异常");
+        throw  new BusinessException("添加异常");
     }
 
     @Override
@@ -101,7 +102,7 @@ public class AccountServiceImpl implements AccountService {
         if(i>0){
             return new Result(0,"编辑成功",i);
         }else {
-            return new Result(-1,"编辑失败",i);
+            throw  new BusinessException("编辑失败");
         }
     }
 
@@ -111,7 +112,7 @@ public class AccountServiceImpl implements AccountService {
         if(i>0){
             return new Result(0,"删除成功",i);
         }else {
-            return new Result(-1,"删除失败",i);
+            throw  new BusinessException("删除失败");
         }
     }
 
@@ -127,10 +128,10 @@ public class AccountServiceImpl implements AccountService {
             if(i>0){
                 return new Result(0,"修改成功",i);
             }else {
-                return new Result(-1,"修改失败",i);
+                throw  new BusinessException("修改失败");
             }
         }
-        return new Result(-1,"旧密码输入错误");
+        throw  new BusinessException("旧密码输入错误");
     }
 
     @Override

@@ -3,6 +3,7 @@ package com.back.chuilun.service.impl;
 import com.back.chuilun.dao.ModelMapper;
 import com.back.chuilun.entity.Model;
 import com.back.chuilun.entity.Result;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.ModelService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -21,14 +22,12 @@ public class ModelServiceImpl implements ModelService {
     @Override
     public Result add(Object object) {
         int insert = modelMapper.insert((Model) object);
-        if (insert==0) {
-            return new Result(-1,"添加失败",insert);
+        if (insert<=0) {
+            throw  new BusinessException("添加失败");
         }else if(insert>0){
             return new Result(0,"添加成功",insert);
-        }else if (insert<0){
-            return new Result(1,"添加失败",insert);
         }
-        return new Result(-1,"添加异常",insert);
+        throw  new BusinessException("添加异常");
     }
 
     @Override
@@ -48,7 +47,7 @@ public class ModelServiceImpl implements ModelService {
             return  new Result(0,"进入页面成功",models);
         }else {
 
-            return new Result(-1,"进入页面失败",models);
+            throw  new BusinessException("进入页面失败");
         }
     }
 
@@ -69,7 +68,7 @@ public class ModelServiceImpl implements ModelService {
         if(i>0){
             return new Result(0,"编辑成功",i);
         }else {
-            return new Result(-1,"编辑失败",i);
+            throw  new BusinessException("编辑失败");
         }
     }
 
@@ -78,7 +77,7 @@ public class ModelServiceImpl implements ModelService {
         if(i>0){
             return new Result(0,"删除成功",i);
         }else {
-            return new Result(-1,"删除失败",i);
+            throw  new BusinessException("删除失败");
         }
     }
 

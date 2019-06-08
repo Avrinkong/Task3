@@ -3,6 +3,7 @@ package com.back.chuilun.service.impl;
 import com.back.chuilun.dao.StudioMapper;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.Studio;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.StudioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -26,13 +27,13 @@ public class StudioServiceImpl implements StudioService {
         studio.setStudioUpdatetime(timestamp);
         int insert = studioMapper.insert(studio);
         if (insert==0) {
-            return new Result(-1,"添加失败",insert);
+            throw  new BusinessException("工作室添加失败");
         }else if(insert>0){
-            return new Result(0,"添加成功",insert);
+            return new Result(0,"工作室添加成功",insert);
         }else if (insert<0){
-            return new Result(1,"添加失败",insert);
+            throw  new BusinessException("工作室添加失败");
         }
-        return new Result(2,"添加异常");
+        throw  new BusinessException("工作室添加异常");
     }
 
     @Override
@@ -52,7 +53,7 @@ public class StudioServiceImpl implements StudioService {
             return  new Result(0,"进入页面成功",studios);
         }else {
 
-            return new Result(-1,"进入页面失败",studios);
+            throw  new BusinessException("进入页面失败");
         }
     }
 
@@ -117,7 +118,7 @@ public class StudioServiceImpl implements StudioService {
         if(i>0){
             return new Result(0,"编辑成功",i);
         }else {
-            return new Result(-1,"编辑失败",i);
+            throw  new BusinessException("编辑失败");
         }
     }
 
@@ -130,7 +131,7 @@ public class StudioServiceImpl implements StudioService {
 
     public Result updateStudioStatus(Integer studioId, Integer studioStutsa) {
         if (studioId == null || studioId <= 0) {
-            return new Result(-1, "id不能为空");
+            throw  new BusinessException("id不能为空");
         }
         Studio studio = studioMapper.selectByPrimaryKey(studioId);
 
@@ -146,7 +147,7 @@ public class StudioServiceImpl implements StudioService {
                 if (i > 0) {
                     return new Result(0, "下架成功", i);
                 } else {
-                    return new Result(-1, "下架失败", i);
+                    throw  new BusinessException("下架失败");
                 }
             } else {
                 studio.setStudioStatus(studioStutsa);
@@ -154,7 +155,7 @@ public class StudioServiceImpl implements StudioService {
                 if (i > 0) {
                     return new Result(0, "上架成功", i);
                 } else {
-                    return new Result(-1, "上架失败", i);
+                    throw  new BusinessException("上架失败");
                 }
             }
         } else {
@@ -167,16 +168,16 @@ public class StudioServiceImpl implements StudioService {
                 if (i > 0) {
                     return new Result(0, "设置成功", i);
                 } else {
-                    return new Result(-1, "设置失败", i);
+                    throw  new BusinessException("设置失败");
                 }
             }else {
                 if (studioStutsa == 1) {
-                    return new Result(-1, "作品集已上架，不需要上架");
+                    throw  new BusinessException("作品集已上架，不需要上架");
                 } else if (studioStutsa == 2) {
-                    return new Result(-1, "作品集已下架，不需要下架");
+                    throw  new BusinessException("作品集已下架，不需要下架");
                 }
             }
         }
-        return new Result(-1,"未知错误");
+        throw  new BusinessException("未知错误");
     }
 }

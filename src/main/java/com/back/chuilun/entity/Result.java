@@ -1,6 +1,6 @@
 package com.back.chuilun.entity;
 
-public class Result <T>{
+public class Result <T> {
     private  int code;
     private  String message;
     private  T data;

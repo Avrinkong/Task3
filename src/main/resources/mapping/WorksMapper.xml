@@ -89,4 +89,21 @@
     from works
     order by change_time
   </select>
+  <select id="selectByName"  resultMap="BaseResultMap">
+    select works_id, works_name, portfolio_name, second_por_name, wcreate_time, change_time,
+    editor, wstatus, works_url, works_intro, works_updateman, works_spare, works_bintro,
+    works_mpic, works_pic
+    from works
+    where works_name  like "%"#{worksName,jdbcType=VARCHAR}"%"  or works_intro like "%"#{worksIntro,jdbcType=VARCHAR}"%"
+    order by change_time
+  </select>
+
+  <select id="selectByIntro"  resultMap="BaseResultMap">
+    select works_id, works_name, portfolio_name, second_por_name, wcreate_time, change_time,
+    editor, wstatus, works_url, works_intro, works_updateman, works_spare, works_bintro,
+    works_mpic, works_pic
+    from works
+    where works_intro like "%"#{worksIntro,jdbcType=VARCHAR}"%"
+    order by change_time
+  </select>
 </mapper>

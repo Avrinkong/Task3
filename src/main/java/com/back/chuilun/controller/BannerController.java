@@ -4,6 +4,7 @@ import com.alibaba.fastjson.JSON;
 import com.alibaba.fastjson.JSONObject;
 import com.back.chuilun.entity.Bannercontrol;
 import com.back.chuilun.entity.Result;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.impl.BannerServiceImpl;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -43,10 +44,10 @@ public class BannerController {
             if (all.size()>0) {
                 return new Result(0, "success", all);
             }else {
-                return new Result(-1,"false");
+                throw  new BusinessException("false");
             }
         }
-        return new Result(-1,"创建人不能为空或者为空格");
+        throw  new BusinessException("创建人不能为空或者为空格");
     }
 
     @RequestMapping(value = "sort",method = RequestMethod.POST)
@@ -58,8 +59,7 @@ public class BannerController {
             Result result = bannerService.sortBanner(list);
             return result;
         }else {
-            Result result = new Result(-1, "输入错误");
-            return result;
+            throw  new BusinessException("输入错误");
         }
     }
 
@@ -73,24 +73,22 @@ public class BannerController {
                     Result add = bannerService.add(bannerUrl, bannerPic);
                     return add;
             }
-            return  new Result(-1,"图片不能为空");
+            throw  new BusinessException("图片不能为空");
         }
-        return  new Result(-1,"连接不能为空");
+        throw  new BusinessException("连接不能为空");
     }
 
     @RequestMapping(value = "status",method = RequestMethod.POST)
     @ResponseBody
     public Result updateBannerStatus(Integer bannerId,Integer bannerStatus){
         if (bannerId!=null){
-            if (bannerStatus!=null){
+            if (bannerStatus!=null&&bannerStatus>0&&bannerStatus<3){
                 Result result = bannerService.updateBannerStatus(bannerId, bannerStatus);
                 return result;
             }
-            Result result = new Result(-1,"上下架状态不能为空");
-            return result;
+            throw  new BusinessException("上下架状态错误");
         }
-        Result result = new Result(-1,"Id不能为空");
-        return result;
+        throw  new BusinessException("Id不能为空");
     }
 
     @RequestMapping(value = "delete",method =RequestMethod.POST)
@@ -99,8 +97,7 @@ public class BannerController {
         if (bannerId!=null){
             Result result =bannerService.deleteById(bannerId);
         }
-        Result result = new Result(-1,"Id不能为空");
-        return result;
+        throw  new BusinessException("Id不能为空");
     }
 
     @RequestMapping(value = "update",method = RequestMethod.POST)
@@ -112,14 +109,11 @@ public class BannerController {
                     Result result = bannerService.updateById(bannerId, bannerUrl,bannerPic);
                     return result;
                 }
-                Result result = new Result(-1,"图片不能为空");
-                return result;
+                throw  new BusinessException("图片不能为空");
             }
-            Result result = new Result(-1,"连接不能为空");
-            return result;
+            throw  new BusinessException("连接不能为空");
         }
-        Result result = new Result(-1,"Id不能为空");
-        return result;
+        throw  new BusinessException("Id不能为空");
     }
 
     @RequestMapping(value = "pageinfo",method = RequestMethod.GET)
@@ -165,16 +159,13 @@ public class BannerController {
                     result.setMessage("文件成功上传到指定目录下");
                     result.setData(path);
                 }else {
-                    result.setMessage("不是我们想要的文件类型,请按要求重新上传");
-                    return result;
+                    throw  new BusinessException("不是我们想要的文件类型,请按要求重新上传");
                 }
             }else {
-                result.setMessage("文件类型为空");
-                return result;
+                throw  new BusinessException("文件类型为空");
             }
         }else {
-            result.setMessage("没有找到相对应的文件或文件大小超出5M");
-            return result;
+            throw  new BusinessException("没有找到相对应的文件或文件大小超出5M");
         }
         return result;
     }

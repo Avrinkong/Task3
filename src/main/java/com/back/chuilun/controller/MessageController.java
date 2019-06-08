@@ -2,6 +2,7 @@ package com.back.chuilun.controller;
 
 import com.back.chuilun.entity.Message;
 import com.back.chuilun.entity.Result;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.impl.MessageServiceImpl;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,10 +45,10 @@ public class MessageController {
             if (all.size()>0) {
                 return new Result(0, "success", all);
             }else {
-                return new Result(-1,"false");
+                throw  new BusinessException("false");
             }
         }
-        return new Result(-1,"作品名称不能为空或者为空格");
+        throw  new BusinessException("作品名称不能为空或者为空格");
     }
 
     @RequestMapping(value = "edit",method = RequestMethod.POST)
@@ -57,23 +58,20 @@ public class MessageController {
             Result result = ms.editMessage(messageId);
             return result;
         }
-        Result result = new Result(-1,"信息ID错误");
-        return result;
+        throw  new BusinessException("信息ID错误");
     }
 
    @RequestMapping(value = "editstatus",method = RequestMethod.POST)
    @ResponseBody
    public Result editstatus(Long messageId,Integer mstatus){
         if(messageId!=null){
-            if (mstatus!=null){
+            if (mstatus!=null&&mstatus>0&&mstatus<3){
                 Result result = ms.updateMstatus(messageId, mstatus);
                 return result;
             }
-            Result result = new Result(-1,"状态不能为空");
-            return result;
+            throw  new BusinessException("状态输入错误");
         }
-       Result result = new Result(-1,"消息id不能为空");
-       return result;
+       throw  new BusinessException("消息id不能为空");
 
    }
 
@@ -84,14 +82,13 @@ public class MessageController {
             Result delete = ms.delete(messageId);
             return delete;
         }
-       Result result = new Result(-1,"消息id不能为空");
-       return result;
+       throw  new BusinessException("消息id不能为空");
    }
 
     /**
      * 保存留言回复
      * @param messageId
-     * @param spare
+     * @param spare 管理员名称
      * @return
      */
    @RequestMapping(value = "save",method = RequestMethod.POST)
@@ -103,13 +100,13 @@ public class MessageController {
                     Result save = ms.save(messageId, spare);
                     return save;
                 }else {
-                    return new Result(-1,"留言不能超过150个字");
+                    throw  new BusinessException("留言不能超过150个字");
                 }
             }else {
-                return new Result(-1,"回复不能为空");
+                throw  new BusinessException("回复不能为空");
             }
         }else {
-            return new Result(-1,"留言ID不能为空");
+            throw  new BusinessException("留言ID不能为空");
         }
    }
 }

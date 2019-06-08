@@ -2,6 +2,7 @@ package com.back.chuilun.controller;
 
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.Studio;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.impl.StudioServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -59,16 +60,16 @@ public class StudioController {
                         Result add = studioService.add(studio);
                         return add;
                     }else {
-                        return new Result(-1,"工作室编辑人不能为空");
+                        throw  new BusinessException("工作室编辑人不能为空");
                     }
                 }else {
-                    return new Result(-1,"工作室文本不能为空");
+                    throw  new BusinessException("工作室文本不能为空");
                 }
             }else {
-                return new Result(-1,"工作室照片不能为空");
+                throw  new BusinessException("工作室照片不能为空");
             }
         }else {
-            return new Result(-1,"工作室名称不能为空");
+            throw  new BusinessException("工作室名称不能为空");
         }
 
     }
@@ -84,19 +85,19 @@ public class StudioController {
                             Result result = studioService.updateById(studioId,studioName,studioPicture,studioText,studioEditor);
                             return result;
                         }else {
-                            return new Result(-1,"工作室编辑人不能为空");
+                            throw  new BusinessException("工作室编辑人不能为空");
                         }
                     }else {
-                        return new Result(-1,"工作室文本不能为空");
+                        throw  new BusinessException("工作室文本不能为空");
                     }
                 }else {
-                    return new Result(-1,"工作室照片不能为空");
+                    throw  new BusinessException("工作室照片不能为空");
                 }
             }else {
-                return new Result(-1,"工作室名称不能为空");
+                throw  new BusinessException("工作室名称不能为空");
             }
         }else {
-            return new Result(-1,"工作室ID不能为空");
+            throw  new BusinessException("工作室ID不能为空");
         }
     }
 
@@ -104,14 +105,14 @@ public class StudioController {
     @ResponseBody
     public Result updatePortfolio(Integer studioId,Integer studioStutsa){
         if (studioId!=null){
-            if (studioStutsa!=null){
+            if (studioStutsa!=null&&studioStutsa>0&&studioStutsa<3){
                 Result result = studioService.updateStudioStatus(studioId, studioStutsa);
                 return result;
             }else {
-                return new Result(-1,"工作室上下架状态不能为空");
+                throw  new BusinessException("工作室上下架状态错误");
             }
         }else {
-            return new Result(-1,"工作室ID不能为空");
+            throw  new BusinessException("工作室ID不能为空");
         }
     }
 }

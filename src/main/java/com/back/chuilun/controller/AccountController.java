@@ -2,6 +2,7 @@ package com.back.chuilun.controller;
 
 import com.back.chuilun.entity.Account;
 import com.back.chuilun.entity.Result;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.AccountService;
 import com.github.pagehelper.PageInfo;
 import org.apache.log4j.Logger;
@@ -36,8 +37,8 @@ public class AccountController {
         if (username!=null&&!username.trim().equals("")){
             if (password!=null&&!password.trim().equals("")){
                 Account accountByNamePwd = as.findAccountByNamePwd(username, password);
-                int accId = Math.toIntExact(accountByNamePwd.getAccId());
-                if (accId == 1) {
+                int num = Math.toIntExact(accountByNamePwd.getAccId());
+                if (num == 1) {
                     model.addObject("message", "添加成功");
                     model.addObject(accountByNamePwd);
                     //String s = JSON.toJSONString(model);
@@ -77,10 +78,10 @@ public class AccountController {
             if (all.size()>0) {
                 return new Result(0, "查询成功", all);
             }else {
-                return new Result(-1,"没有符合要求的账户");
+                throw  new BusinessException("没有符合要求的账户");
             }
         }else {
-            return new Result(-1,"用户名不能为空");
+            throw  new BusinessException("用户名不能为空");
         }
     }
 
@@ -94,20 +95,16 @@ public class AccountController {
                         Result result = as.add(account);
                         return result;
                     }else {
-                        Result result = new Result(-1,"角色名不能为空");
-                        return result;
+                        throw  new BusinessException("角色名不能为空");
                     }
                 }else {
-                    Result result = new Result(-1,"密码不能为空");
-                    return result;
+                    throw  new BusinessException("密码不能为空");
                 }
             }else {
-                Result result = new Result(-1,"用户名不能为空");
-                return result;
+                throw  new BusinessException("用户名不能为空");
             }
         }else {
-            Result result = new Result(-1,"ID不能为空");
-            return result;
+            throw  new BusinessException("ID不能为空");
         }
 
     }
@@ -122,17 +119,13 @@ public class AccountController {
                         Result result = as.updateById(account);
                         return result;
                     }
-                    Result result = new Result(-1,"角色名不能为空");
-                    return result;
+                    throw  new BusinessException("角色名不能为空");
                 }
-                Result result = new Result(-1,"密码不能为空");
-                return result;
+                throw  new BusinessException("密码不能为空");
             }
-            Result result = new Result(-1,"用户名不能为空");
-            return result;
+            throw  new BusinessException("用户名不能为空");
         }
-        Result result = new Result(-1,"ID不能为空");
-        return result;
+        throw  new BusinessException("ID不能为空");
     }
 
     @RequestMapping(value = "delete",method =RequestMethod.POST)
@@ -140,9 +133,10 @@ public class AccountController {
     public Result deleteById(Long accId){
         if (accId!=null){
             Result result = as.deleteById(accId);
+            return result;
+        }else {
+            throw  new BusinessException("角色ID不能为空");
         }
-        Result result = new Result(-1,"角色ID不能为空");
-        return result;
     }
 
     @RequestMapping(value = "password",method = RequestMethod.POST)
@@ -150,18 +144,15 @@ public class AccountController {
     public Result changePassword(Long accId,String oldpassword,String newpassword ){
         if (accId!=null){
             if (oldpassword!=null&&!oldpassword.trim().equals("")){
-                if (newpassword!=null&&!newpassword.trim().equals("")&&newpassword.length()<=6){
+                if (newpassword!=null&&!newpassword.trim().equals("")&&newpassword.length()>=6){
                     Result result = as.changePassword(accId,oldpassword,newpassword);
                     return result;
                 }
-                Result result = new Result(-1,"新密码不能为空");
-                return result;
+                throw  new BusinessException("新密码不能为空或密码长度小于6位数");
             }
-            Result result = new Result(-1,"旧密码不能为空");
-            return result;
+            throw  new BusinessException("旧密码不能为空");
         }
-        Result result = new Result(-1,"用户id不能为空");
-        return result;
+        throw  new BusinessException("用户id不能为空");
     }
 
     @RequestMapping(value = "pageinfo",method = RequestMethod.GET)

@@ -3,6 +3,7 @@ package com.back.chuilun.service.impl;
 import com.back.chuilun.dao.BannercontrolMapper;
 import com.back.chuilun.entity.Bannercontrol;
 import com.back.chuilun.entity.Result;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.BannerService;
 import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
@@ -45,7 +46,7 @@ public class BannerServiceImpl implements BannerService {
         if(bannercontrols!=null){
             return  new Result(0,"进入页面成功",bannercontrols);
         }else {
-            return new Result(-1,"进入页面失败",bannercontrols);
+            throw  new BusinessException("进入页面失败");
         }
     }
 
@@ -88,7 +89,7 @@ public class BannerServiceImpl implements BannerService {
         if(i>0){
             return new Result(0,"设置成功",i);
         }else {
-            return new Result(-1,"设置失败",i);
+            throw  new BusinessException("设置失败");
         }
     }
 
@@ -110,7 +111,7 @@ public class BannerServiceImpl implements BannerService {
         if (insert>0){
             return new Result(0,"添加成功",insert);
         }else {
-            return new Result(-1,"添加失败",insert);
+            throw  new BusinessException("添加失败");
         }
     }
 
@@ -122,13 +123,13 @@ public class BannerServiceImpl implements BannerService {
      */
     public Result updateBannerStatus(Integer bannerId, Integer bannerStatus) {
         if (bannerId==null||bannerId<=0){
-            return new Result(-1,"id不能为空");
+            throw  new BusinessException("id不能为空");
         }
         //bannerMapper.selectAll(bannerStatus);
         if (bannerStatus==1){
             List<Bannercontrol> bannercontrols = bannerMapper.selectByStatus(bannerStatus);
             if (bannercontrols.size()>5){
-                return new Result(-1,"最多上架6个banner图");
+                throw  new BusinessException("最多上架6个banner图");
             }
         }
         Bannercontrol bannercontrol = bannerMapper.selectByPrimaryKey(bannerId);
@@ -142,24 +143,35 @@ public class BannerServiceImpl implements BannerService {
 
                 int i = bannerMapper.updateByPrimaryKey(bannercontrol);
                 if (i>0){
+                    int j =1;
+                    bannerStatus = 1;
+                    List<Bannercontrol> bannercontrols = bannerMapper.selectByStatus(bannerStatus);
+                    for (Bannercontrol bannercontrol1:bannercontrols){
+                        bannercontrol1.setBannerSor(j);
+                        j++;
+                    }
+                    bannerMapper.updateSorByKey(bannercontrols);
                     return new Result(0,"下架成功",i);
                 }else {
-                    return new Result(-1,"下架失败",i);
+                    throw  new BusinessException("下架失败");
                 }
             }else{
                 bannercontrol.setBannerStatus(bannerStatus);
                 int i = bannerMapper.updateByPrimaryKey(bannercontrol);
                 if (i>0){
+                    List<Bannercontrol> bannercontrols = bannerMapper.selectByStatus(bannerStatus);
+                    bannercontrol.setBannerSor(bannercontrols.size());
+                    bannerMapper.updateByPrimaryKey(bannercontrol);
                     return new Result(0,"上架成功",i);
                 }else {
-                    return new Result(-1,"上架失败",i);
+                    throw  new BusinessException("上架失败");
                 }
             }
         }else{
             if(bannerStatus==1){
-                return new Result(-1,"作品集已上架，不需要上架");
+                throw  new BusinessException("作品集已上架，不需要上架");
             }else {
-                return new Result(-1,"作品集已下架，不需要下架");
+                throw  new BusinessException("作品集已下架，不需要下架");
             }
         }
     }
@@ -170,7 +182,7 @@ public class BannerServiceImpl implements BannerService {
         if(i>0){
             return new Result(0,"删除成功",i);
         }else {
-            return new Result(-1,"删除失败",i);
+            throw  new BusinessException("删除失败");
         }
     }
 
@@ -186,7 +198,7 @@ public class BannerServiceImpl implements BannerService {
         if(i>0){
             return new Result(0,"编辑成功",i);
         }else {
-            return new Result(-1,"编辑失败",i);
+            throw  new BusinessException("编辑失败");
         }
     }
 

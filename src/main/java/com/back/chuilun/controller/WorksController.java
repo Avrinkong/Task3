@@ -2,12 +2,14 @@ package com.back.chuilun.controller;
 
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.Works;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.impl.WorksServiceImpl;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,10 +40,10 @@ public class WorksController {
             if (all.size()>0) {
                 return new Result(0, "success", all);
             }else {
-                return new Result(-1,"false");
+                throw  new BusinessException("查找成功");
             }
         }else {
-            return new Result(-1,"作品集名称不能为空");
+            throw  new BusinessException("作品集名称不能为空");
         }
     }
 
@@ -88,16 +90,13 @@ public class WorksController {
                     result.setMessage("文件成功上传到指定目录下");
                     result.setData(path);
                 }else {
-                    result.setMessage("不是我们想要的文件类型,请按要求重新上传");
-                    return result;
+                    throw  new BusinessException("不是我们想要的文件类型,请按要求重新上传");
                 }
             }else {
-                result.setMessage("文件类型为空");
-                return result;
+                throw  new BusinessException("文件类型为空");
             }
         }else {
-            result.setMessage("没有找到相对应的文件或文件大小超出5M");
-            return result;
+            throw  new BusinessException("没有找到相对应的文件或文件大小超出5M");
         }
         return result;
     }
@@ -109,8 +108,8 @@ public class WorksController {
             if (worksIntro!=null&&!worksIntro.trim().equals("")&&worksIntro.length()<=300){
                 if (worksMpic!=null&&!worksMpic.trim().equals("")){
                     if (worksUrl!=null&&!worksUrl.trim().equals("")){
-                        if (worksPic!=null&&worksPic.trim().equals("")){
-                            if (worksBintro!=null&&worksBintro.trim().equals("")){
+                        if (worksPic!=null&&!worksPic.trim().equals("")){
+                            if (worksBintro!=null&&!worksBintro.trim().equals("")){
                                 Works works = new Works();
                                 works.setSecondPorName("萌萌哒默认二级标题");
                                 works.setWorksName(worksName);
@@ -122,22 +121,23 @@ public class WorksController {
                                 Result update = worksService.add(works);
                                 return update;
                             }else {
-                                return new Result(-1,"工作室完整简介不能为空");
+                                throw  new BusinessException("工作室完整簡介不能爲空");
+                                        /*Result(-1,"工作室完整简介不能为空");*/
                             }
                         }else {
-                            return new Result(-1,"作品照片不能为空");
+                            throw  new BusinessException("作品照片不能为空");
                         }
                     }else {
-                        return new Result(-1,"作品链接不能为空");
+                        throw  new BusinessException("作品链接不能为空");
                     }
                 }else {
-                    return new Result(-1,"作品缩略图不能为空");
+                    throw  new BusinessException("作品缩略图不能为空");
                 }
             }else {
-                return new Result(-1,"作品简介不能为空");
+                throw  new BusinessException("作品简介不能为空");
             }
         }else {
-            return new Result(-1,"作品名称不能为空或作品名称超过15字");
+            throw  new BusinessException("作品名称不能为空或作品名称超过15字");
         }
       /* Date date=new Date();
        long timestamp=date.getTime();
@@ -151,17 +151,17 @@ public class WorksController {
     public Result updateWstatus(Integer worksId,String worksName,Integer wstatus){
         if (worksId!=null){
             if (worksName!=null&&!worksName.trim().equals("")){
-                if (wstatus!=null){
+                if (wstatus!=null&&wstatus>0&&wstatus<3){
                     Result result = worksService.updateWstatus(worksId, worksName, wstatus);
                     return result;
                 }else {
-                    return new Result(-1,"作品集上下架状态不能为空");
+                    throw  new BusinessException("作品集上下架状态错误");
                 }
             }else {
-                return new Result(-1,"作品集名称不能为空");
+                throw  new BusinessException("作品集名称不能为空");
             }
         }else {
-            return new Result(-1,"作品集ID不能为空");
+            throw  new BusinessException("作品集ID不能为空");
         }
     }
 
@@ -172,7 +172,7 @@ public class WorksController {
             Result delete = worksService.delete(worksId);
             return delete;
         }else {
-            return new Result(-1,"作品集ID不能为空");
+            throw  new BusinessException("作品集ID不能为空");
         }
     }
 
@@ -196,25 +196,25 @@ public class WorksController {
                                     Result update = worksService.update(works);
                                     return update;
                                 }else {
-                                    return new Result(-1,"工作室完整简介不能为空");
+                                    throw  new BusinessException("工作室完整简介不能为空");
                                 }
                             }else {
-                                return new Result(-1,"作品照片不能为空");
+                                throw  new BusinessException("作品照片不能为空");
                             }
                         }else {
-                            return new Result(-1,"作品链接不能为空");
+                            throw  new BusinessException("作品链接不能为空");
                         }
                     }else {
-                        return new Result(-1,"作品缩略图不能为空");
+                        throw  new BusinessException("作品缩略图不能为空");
                     }
                 }else {
-                    return new Result(-1,"作品简介不能为空");
+                    throw  new BusinessException("作品简介不能为空");
                 }
             }else {
-                return new Result(-1,"作品集名称不能为空");
+                throw  new BusinessException("作品集名称不能为空");
             }
         }else {
-            return new Result(-1,"工作室ID不能为空");
+            throw  new BusinessException("工作室ID不能为空");
         }
       /* Date date=new Date();
        long timestamp=date.getTime();
@@ -227,5 +227,13 @@ public class WorksController {
     public PageInfo<Works> findByPage(int currentPage, int pageSize){
         PageInfo<Works> info = worksService.findByPage(currentPage,pageSize);
         return info;
+    }
+
+
+    @RequestMapping(value = "search",method = RequestMethod.POST)
+    @ResponseBody
+    public Result search(@RequestParam("keyword") String keyword){
+        Result result =worksService.findWorkByNI(keyword);
+        return result;
     }
 }

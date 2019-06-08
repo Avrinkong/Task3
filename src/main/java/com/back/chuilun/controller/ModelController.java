@@ -2,6 +2,7 @@ package com.back.chuilun.controller;
 
 import com.back.chuilun.entity.Model;
 import com.back.chuilun.entity.Result;
+import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.impl.ModelServiceImpl;
 import com.github.pagehelper.PageInfo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -34,10 +35,10 @@ public class ModelController {
             if (all.size()>0) {
                 return new Result(0, "查询成功", all);
             }else {
-                return new Result(-1,"查询失败");
+                throw  new BusinessException("查询失败");
             }
         }
-       return new Result(-1,"模块名称不能为空");
+        throw  new BusinessException("模块名称不能为空");
     }
 
     @RequestMapping(value = "add",method = RequestMethod.POST)
@@ -48,17 +49,17 @@ public class ModelController {
         if (modelName!=null&&!modelName.trim().equals("")){
             model.setModelName(modelName);
         }else {
-            return new Result(-1,"模块名称不能为空");
+            throw  new BusinessException("模块名称不能为空");
         }
         if (fatherId!=null){
             model.setFatherid(fatherId);
         }else {
-            return new Result(-1,"父节点不能为空");
+            throw  new BusinessException("父节点不能为空");
         }
         if (modelUrl!=null&&!modelUrl.trim().equals("")){
             model.setModelUrl(modelUrl);
         }else {
-            return new Result(-1,"模块连接不能为空");
+            throw  new BusinessException("模块连接不能为空");
         }
         Result add = modelService.add(model);
         return add;
@@ -74,16 +75,16 @@ public class ModelController {
                         Result result = modelService.updateById(modelId,modelName,fatherId,modelUrl);
                         return result;
                     }else {
-                        return new Result(-1,"模块连接不能为空");
+                        throw  new BusinessException("模块连接不能为空");
                     }
                 }else {
-                    return new Result(-1,"父节点不能为空");
+                    throw  new BusinessException("父节点不能为空");
                 }
             }else {
-                return new Result(-1,"模块名称不能为空");
+                throw  new BusinessException("模块名称不能为空");
             }
         }else {
-            return new Result(-1,"模块ID不能为空");
+            throw  new BusinessException("模块ID不能为空");
         }
     }
 
@@ -94,7 +95,7 @@ public class ModelController {
             Result result = modelService.deleteModel(modelId);
             return result;
         }
-        return new Result(-1,"模块id不能为空");
+        throw  new BusinessException("模块id不能为空");
     }
 
     @RequestMapping(value = "pageinfo",method = RequestMethod.GET)
