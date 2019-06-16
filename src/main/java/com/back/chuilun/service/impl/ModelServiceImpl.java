@@ -21,6 +21,13 @@ public class ModelServiceImpl implements ModelService {
 
     @Override
     public Result add(Object object) {
+        Model model = (Model)object;
+        List<Model> models = modelMapper.selectAll();
+        for (Model model1:models){
+            if (model1.getModelName().equals(model.getModelName())){
+                throw new BusinessException("该模块已存在");
+            }
+        }
         int insert = modelMapper.insert((Model) object);
         if (insert<=0) {
             throw  new BusinessException("添加失败");
@@ -59,6 +66,16 @@ public class ModelServiceImpl implements ModelService {
     }
 
     public Result updateById(Integer modelId ,String modelName, Integer fatherId, String modelUrl) {
+        Model model1 = modelMapper.selectByPrimaryKey(modelId);
+        if (model1==null){
+            throw new BusinessException("该模块不存在");
+        }
+        List<Model> models = modelMapper.selectAll();
+        for (Model model2:models){
+            if (model2.getModelName().equals(modelName)){
+                throw new BusinessException("该模块已存在");
+            }
+        }
         Model model = new Model();
         model.setModelName(modelName);
         model.setFatherid(fatherId);
@@ -73,6 +90,10 @@ public class ModelServiceImpl implements ModelService {
     }
 
     public Result deleteModel(Integer modelId) {
+        Model model = modelMapper.selectByPrimaryKey(modelId);
+        if (model==null){
+            throw new BusinessException("该模块不存在");
+        }
         int i = modelMapper.deleteByPrimaryKey(modelId);
         if(i>0){
             return new Result(0,"删除成功",i);

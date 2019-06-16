@@ -103,7 +103,7 @@
     select portfolio_id, portfolio_name, pstatus, pcreate_time, pupdate_time, poreditor,
     portfolio_updateman, portfolio_spare
     from works_cllection
-    order by portfolio_spare
+    order by pcreate_time
   </select>
 
     <select id="selectByStatus" resultType="com.back.chuilun.entity.WorksCllection">
@@ -111,6 +111,14 @@
     portfolio_updateman, portfolio_spare
     from works_cllection
     where pstatus=#{pstutsa}
+    order by portfolio_spare
+    </select>
+
+  <select id="selectByPName" resultMap="BaseResultMap">
+      select portfolio_id, portfolio_name, pstatus, pcreate_time, pupdate_time, poreditor,
+    portfolio_updateman, portfolio_spare
+    from works_cllection
+    where portfolio_name=#{portfolioName,jdbcType=VARCHAR}
     order by portfolio_spare
     </select>
 

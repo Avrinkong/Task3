@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -48,7 +49,21 @@ public class MessageController {
                 throw  new BusinessException("false");
             }
         }
-        throw  new BusinessException("作品名称不能为空或者为空格");
+        Result all = ms.findAll();
+        List<Message> list = new ArrayList<>();
+        if (mstatus!=null){
+            List<Message> data = (List<Message>) all.getData();
+            for (Message studio:data){
+                if (studio.getMstatus().equals(mstatus)){
+                    list.add(studio);
+                }
+            }
+            if (list.size()<=0){
+                throw new BusinessException("查询错误");
+            }
+            all.setData(list);
+        }
+        return all;
     }
 
     @RequestMapping(value = "edit",method = RequestMethod.POST)

@@ -59,15 +59,16 @@ public class BannerServiceImpl implements BannerService {
     public List findAll(Integer bannerStatus, String bannerEditor){
         List<Bannercontrol> list = new ArrayList<>();
         List<Bannercontrol> bannercontrols = bannerMapper.selectByBanner(bannerStatus);
+
         //logger.info(messages+"1111111111111111");
         if (bannercontrols!=null){
             for (Bannercontrol b:bannercontrols){
                 if(bannerStatus==null){
-                    if(b.getBannerEditor().equals(bannerEditor)){
+                    if(b.getBannerEditor().contains(bannerEditor)){
                         list.add(b);
                     }
                 }else {
-                    if(b.getBannerEditor().equals(bannerEditor)){
+                    if(b.getBannerEditor().contains(bannerEditor)){
                         if (b.getBannerStatus()==bannerStatus){
                             list.add(b);
                             // logger.info(message+"22222222222222");
@@ -104,6 +105,7 @@ public class BannerServiceImpl implements BannerService {
         bannercontrol.setBannerUrl(bannerUrl);
         bannercontrol.setBannerPic(bannerPic);
         bannercontrol.setBannerStatus(2);
+        bannercontrol.setBannerEditor("1");
         Date date=new Date();
         long timestamp=date.getTime();
         bannercontrol.setBannerCreatetime(timestamp);
@@ -125,7 +127,10 @@ public class BannerServiceImpl implements BannerService {
         if (bannerId==null||bannerId<=0){
             throw  new BusinessException("id不能为空");
         }
-        //bannerMapper.selectAll(bannerStatus);
+        Bannercontrol bannercontrol2 = bannerMapper.selectByPrimaryKey(bannerId);
+        if (bannercontrol2==null){
+            throw new BusinessException("该banner图不存在！");
+        }
         if (bannerStatus==1){
             List<Bannercontrol> bannercontrols = bannerMapper.selectByStatus(bannerStatus);
             if (bannercontrols.size()>5){
@@ -160,7 +165,7 @@ public class BannerServiceImpl implements BannerService {
                 int i = bannerMapper.updateByPrimaryKey(bannercontrol);
                 if (i>0){
                     List<Bannercontrol> bannercontrols = bannerMapper.selectByStatus(bannerStatus);
-                    bannercontrol.setBannerSor(bannercontrols.size());
+                    bannercontrol.setBannerSor(bannercontrols.size()+1);
                     bannerMapper.updateByPrimaryKey(bannercontrol);
                     return new Result(0,"上架成功",i);
                 }else {
@@ -178,6 +183,10 @@ public class BannerServiceImpl implements BannerService {
 
 
     public Result deleteById(Integer bannerId) {
+        Bannercontrol bannercontrol = bannerMapper.selectByPrimaryKey(bannerId);
+        if (bannercontrol==null){
+            throw new BusinessException("该banner图不存在！");
+        }
         int i = bannerMapper.deleteByPrimaryKey(bannerId);
         if(i>0){
             return new Result(0,"删除成功",i);
@@ -187,6 +196,10 @@ public class BannerServiceImpl implements BannerService {
     }
 
     public Result updateById(Integer bannerId, String bannerUrl, String bannerPic) {
+        Bannercontrol bannercontro2 = bannerMapper.selectByPrimaryKey(bannerId);
+        if (bannercontro2==null){
+            throw new BusinessException("该banner图不存在！");
+        }
         Bannercontrol bannercontrol = new Bannercontrol();
         Date date=new Date();
         long timestamp=date.getTime();
@@ -208,5 +221,12 @@ public class BannerServiceImpl implements BannerService {
         PageInfo<Bannercontrol> pageInfo =new PageInfo<>(bannercontrols);
         return pageInfo;
     }
+
+    public List<Bannercontrol> findByBS(Integer bannerStatus){
+        List<Bannercontrol> bannercontrols = bannerMapper.selectByStatus(bannerStatus);
+
+        return bannercontrols;
+    }
+
 
 }

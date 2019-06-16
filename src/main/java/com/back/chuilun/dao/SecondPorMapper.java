@@ -50,4 +50,8 @@ public interface SecondPorMapper {
     int updateSpareByKey(List<SecondPor> secondPor);
 
     List<SecondPor> selectByStatus(Integer secStatus);
+
+    List<SecondPor> selectByPname(String portfolioName);
+
+    List<SecondPor> selectBySname(String secName);
 }

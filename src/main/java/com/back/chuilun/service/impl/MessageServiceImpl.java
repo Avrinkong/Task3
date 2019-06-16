@@ -103,6 +103,10 @@ public class MessageServiceImpl implements MessageService {
         /*Message ms = new Message();
         ms.setMessageId(messageId);
         ms.setWorksName("测试啊，大佬");*/
+        List<Message> list = messageMapper.selectAll();
+        if (list.size()<messageId){
+            throw  new BusinessException("该用户不存在！");
+        }
         Message message = messageMapper.selectByPrimaryKey(messageId);
         if(message.getMstatus()==mstatus){//根据ID查询出的对象状态码和传入对象一致
             if (mstatus==1){//已经为精选留言状态

@@ -49,5 +49,9 @@ public interface WorksMapper {
 
     List<Works> selectByName(String keyword);
 
-    List<Works> selectByIntro(String keyword);
+    //List<Works> selectByIntro(String keyword);
+
+    List<Works> selectByPName(String portfolioName);
+
+    List<Works> selectBySName(String secondPorName);
 }

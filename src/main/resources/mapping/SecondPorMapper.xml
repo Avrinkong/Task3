@@ -75,7 +75,7 @@
     order by sec_spare
   </select>
 
-    <select id="selectByStatus" resultType="com.back.chuilun.entity.SecondPor">
+    <select id="selectByStatus" resultMap="BaseResultMap">
       select second_por_id, sec_name, portfolio_name, sec_status, sec_createtime, sec_updatetime,
     sec_editor, sec_createman, sec_spare
     from second_por
@@ -83,6 +83,21 @@
     order by sec_spare
     </select>
 
+  <select id="selectByPname" resultMap="BaseResultMap">
+      select second_por_id, sec_name, portfolio_name, sec_status, sec_createtime, sec_updatetime,
+    sec_editor, sec_createman, sec_spare
+    from second_por
+    where portfolio_name=#{portfolioName,jdbcType=VARCHAR}
+    order by sec_spare
+    </select>
+
+   <select id="selectBySname" resultMap="BaseResultMap">
+      select second_por_id, sec_name, portfolio_name, sec_status, sec_createtime, sec_updatetime,
+    sec_editor, sec_createman, sec_spare
+    from second_por
+    where sec_name=#{secName,jdbcType=VARCHAR}
+    order by sec_spare
+    </select>
     <update id="updateSpareByKey" >
     <foreach collection="list"  item="var" separator=";">
       update second_por

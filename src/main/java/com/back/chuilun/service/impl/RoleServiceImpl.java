@@ -22,6 +22,12 @@ public class RoleServiceImpl implements RoleService {
     @Override
     public Result add(Object object) {
         Role role = (Role) object;
+        List<Role> roles = roleMapper.selectAll();
+        for (Role role1:roles){
+            if (role1.getRoleName().equals(role.getRoleName())){
+                throw  new BusinessException("该角色名称已使用");
+            }
+        }
         Date date=new Date();
         long timestamp=date.getTime();
         role.setRoleCreatetime(timestamp);
@@ -64,6 +70,13 @@ public class RoleServiceImpl implements RoleService {
         Date date=new Date();
         long timestamp=date.getTime();
         role.setRoleCreatetime(timestamp);
+        Role role1 = roleMapper.selectByPrimaryKey(role.getRoleId());
+        if (role1==null){
+            throw new BusinessException("该角色不存在！");
+        }
+        if (!role1.getRoleName().equals(role.getRoleName())){
+            throw new BusinessException("角色名和用户ID匹配错误");
+        }
         int i = roleMapper.updateByPrimaryKey(role);
         if (i>0){
             return new Result(0,"角色编辑成功",i);
@@ -73,6 +86,10 @@ public class RoleServiceImpl implements RoleService {
     }
 
     public Result deleteById(Integer roleId) {
+        Role role = roleMapper.selectByPrimaryKey(roleId);
+        if (role==null){
+            throw  new BusinessException("角色不存在");
+        }
         int i = roleMapper.deleteByPrimaryKey(roleId);
         if(i>0){
             return new Result(0,"删除成功",i);

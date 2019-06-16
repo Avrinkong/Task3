@@ -41,10 +41,9 @@ public class WorksServiceImpl implements WorksService {
             throw  new BusinessException("作品添加失败");
         }else if(insert>0){
             return new Result(0,"作品添加成功",insert);
-        }else if (insert<0){
+        }else {
             throw  new BusinessException("作品添加失败");
         }
-        throw  new BusinessException("作品添加异常");
     }
 
     @Override
@@ -53,6 +52,10 @@ public class WorksServiceImpl implements WorksService {
     }
 
     public Result delete(Integer number) {
+        Works works = worksMapper.selectByPrimaryKey(number);
+        if (works==null){
+            throw new BusinessException("该作品不存在！");
+        }
         int i = worksMapper.deleteByPrimaryKey(number);
         if(i>0){
             return new Result(0,"删除成功",i);
@@ -94,14 +97,15 @@ public class WorksServiceImpl implements WorksService {
     public List findAll(String worksName, Integer wstatus){
         List<Works> list = new ArrayList<>();
         List<Works> works = worksMapper.selectAll();
+
         //logger.info(messages+"1111111111111111");
         for (Works w:works){
             if(wstatus==null){
-                if(w.getWorksName().equals(worksName)){
+                if(w.getWorksName().contains(worksName)){
                     list.add(w);
                 }
             }else {
-                if(w.getWorksName().equals(worksName)){
+                if(w.getWorksName().contains(worksName)){
                     if (w.getWstatus()==wstatus){
                         list.add(w);
                         // logger.info(message+"22222222222222");
@@ -114,12 +118,14 @@ public class WorksServiceImpl implements WorksService {
 
     public Result updateWstatus(Integer worksId,String worksName,Integer wstatus){
         if (worksId==null||worksId<=0){
-            return new Result(-1,"id不能为空");
+            throw  new BusinessException("id不能为空");
         }
         Works works = worksMapper.selectByPrimaryKey(worksId);
-
-        if(worksName!=null) {
-            works.setWorksName(worksName);
+        if (works==null){
+            throw  new BusinessException("该作品不存在！");
+        }
+        if (!works.getWorksName().equals(worksName)){
+            throw  new BusinessException("作品和ID不匹配！");
         }
         if (works.getWstatus()!=null&&works.getWstatus()!=wstatus){
             if(works.getWstatus()==1){

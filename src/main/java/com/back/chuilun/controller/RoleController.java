@@ -35,10 +35,11 @@ public class RoleController {
             if (all.size()>0) {
                 return new Result(0, "查询成功", all);
             }else {
-                throw  new BusinessException("查询失败");
+                throw  new BusinessException("用户不存在");
             }
         }else {
-            throw  new BusinessException("角色名不能为空");
+            Result all = roleService.findAll();
+            return all;
         }
     }
 
@@ -46,11 +47,11 @@ public class RoleController {
     @ResponseBody
     public Result addRole(Role role){
         if(role.getRoleName()!=null&&!role.getRoleName().trim().equals("")){
-            if(role.getRoleMessagestatus()!=null&&role.getRoleMessagestatus()>1&&role.getRoleMessagestatus()<3){
-                if(role.getRoleWroksstatus()!=null&&role.getRoleWroksstatus()>1&&role.getRoleWroksstatus()<3){
-                    if (role.getRoleBannerstatus()!=null&&role.getRoleBannerstatus()>1&&role.getRoleBannerstatus()<3){
-                        if (role.getRoleStudiostatus()!=null&&role.getRoleStudiostatus()>1&&role.getRoleStudiostatus()<3){
-                            if(role.getRoleRoadstatus()!=null&&role.getRoleRoadstatus()>1&&role.getRoleRoadstatus()<3){
+            if(role.getRoleMessagestatus()!=null&&role.getRoleMessagestatus()>0&&role.getRoleMessagestatus()<3){
+                if(role.getRoleWroksstatus()!=null&&role.getRoleWroksstatus()>0&&role.getRoleWroksstatus()<3){
+                    if (role.getRoleBannerstatus()!=null&&role.getRoleBannerstatus()>0&&role.getRoleBannerstatus()<3){
+                        if (role.getRoleStudiostatus()!=null&&role.getRoleStudiostatus()>0&&role.getRoleStudiostatus()<3){
+                            if(role.getRoleRoadstatus()!=null&&role.getRoleRoadstatus()>0&&role.getRoleRoadstatus()<3){
                                 Result add = roleService.add(role);
                                 return add;
                             }else {
@@ -79,13 +80,13 @@ public class RoleController {
     public Result updateById(Role role){
         if (role.getRoleId()!=null){
             if(role.getRoleName()!=null&&!role.getRoleName().trim().equals("")){
-                if(role.getRoleMessagestatus()!=null&&role.getRoleMessagestatus()>1&&role.getRoleMessagestatus()<3) {
-                    if (role.getRolePortfolio() != null || role.getRolePortfolio() >1 || role.getRolePortfolio()<3) {
-                        if (role.getRoleSecpotstatus()!=null||role.getRoleSecpotstatus()>1||role.getRoleSecpotstatus()<3) {
-                            if (role.getRoleWroksstatus() != null && role.getRoleWroksstatus() > 1 && role.getRoleWroksstatus() < 3) {
-                                if (role.getRoleBannerstatus() != null && role.getRoleBannerstatus() > 1 && role.getRoleBannerstatus() < 3) {
-                                    if (role.getRoleStudiostatus() != null && role.getRoleStudiostatus() > 1 && role.getRoleStudiostatus() < 3) {
-                                        if (role.getRoleRoadstatus() != null && role.getRoleRoadstatus() > 1 && role.getRoleRoadstatus() < 3) {
+                if(role.getRoleMessagestatus()!=null&&role.getRoleMessagestatus()>0&&role.getRoleMessagestatus()<3) {
+                    if (role.getRolePortfolio() != null && role.getRolePortfolio() >0 && role.getRolePortfolio()<3) {
+                        if (role.getRoleSecpotstatus()!=null&&role.getRoleSecpotstatus()>0&&role.getRoleSecpotstatus()<3) {
+                            if (role.getRoleWroksstatus() != null && role.getRoleWroksstatus() > 0 && role.getRoleWroksstatus() < 3) {
+                                if (role.getRoleBannerstatus() != null && role.getRoleBannerstatus() > 0&& role.getRoleBannerstatus() < 3) {
+                                    if (role.getRoleStudiostatus() != null && role.getRoleStudiostatus() > 0 && role.getRoleStudiostatus() < 3) {
+                                        if (role.getRoleRoadstatus() != null && role.getRoleRoadstatus() > 0 && role.getRoleRoadstatus() < 3) {
                                             Result result = roleService.updateById(role);
                                             return result;
                                         } else {

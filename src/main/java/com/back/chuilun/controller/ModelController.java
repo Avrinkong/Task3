@@ -35,10 +35,11 @@ public class ModelController {
             if (all.size()>0) {
                 return new Result(0, "查询成功", all);
             }else {
-                throw  new BusinessException("查询失败");
+                throw  new BusinessException("没有该模块");
             }
         }
-        throw  new BusinessException("模块名称不能为空");
+        Result all = modelService.findAll();
+        return all;
     }
 
     @RequestMapping(value = "add",method = RequestMethod.POST)

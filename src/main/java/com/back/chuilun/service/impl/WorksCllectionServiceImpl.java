@@ -2,8 +2,10 @@ package com.back.chuilun.service.impl;
 
 import com.back.chuilun.dao.SecondPorMapper;
 import com.back.chuilun.dao.WorksCllectionMapper;
+import com.back.chuilun.dao.WorksMapper;
 import com.back.chuilun.entity.Result;
 import com.back.chuilun.entity.SecondPor;
+import com.back.chuilun.entity.Works;
 import com.back.chuilun.entity.WorksCllection;
 import com.back.chuilun.exception.BusinessException;
 import com.back.chuilun.service.WorksCllectionService;
@@ -21,13 +23,24 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
     private WorksCllectionMapper wcm;
     @Autowired
     private SecondPorMapper secondPorMapper;
+    @Autowired
+    private WorksMapper worksMapper;
 
     @Override
     public Result add(Object object) {
         List<WorksCllection> list = wcm.selectAll();
-        if (list.size()>7){
+        String a = (String)object;
+        if (list.size()>0) {
+            for (WorksCllection w:list){
+                if (w.getPortfolioName().equals(a)){
+                    throw  new BusinessException("该用户名已存在");
+                }
+            }
+        }
+        if (list.size()>=7){
             throw  new BusinessException("作品集数量已达上限");
         }else {
+
             WorksCllection wc= new WorksCllection();
             wc.setPortfolioName((String) object);
             wc.setPstatus(2);
@@ -117,6 +130,9 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
             throw  new BusinessException("id不能为空");
         }
         WorksCllection worksCllection = wcm.selectByPrimaryKey(portfolioId);
+        if (worksCllection==null){
+            throw  new BusinessException("该作品集不存在");
+        }
         List<SecondPor> secondPors = secondPorMapper.selectAll();
         if (worksCllection.getPortfolioName().equals(portfolioName)){
             if (worksCllection.getPortfolioName()!=null&&secondPors.size()>0) {
@@ -193,12 +209,42 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
      * @return
      */
     public Result updateById(Long portfolioId,String portfolioName){
+        WorksCllection worksCllection1 = wcm.selectByPrimaryKey(portfolioId);
+        List<WorksCllection> worksCllections = wcm.selectAll();
+        if (worksCllections.size()>0){
+            for (WorksCllection worksCllection:worksCllections){
+                if (worksCllection.getPortfolioName().equals(portfolioName)){
+                    throw  new BusinessException("该作品集已存在");
+                }
+            }
+        }
+
         WorksCllection worksCllection = new WorksCllection();
-        worksCllection.setPortfolioId(portfolioId);
+        List<SecondPor> secondPors = secondPorMapper.selectByPname(worksCllection1.getPortfolioName());
+        List<Works> list = worksMapper.selectByPName(worksCllection1.getPortfolioName());
+        if (list.size()>0){
+            for (Works w :list){
+                w.setPortfolioName(portfolioName);
+                int i1 = worksMapper.updateByPrimaryKey(w);
+                if(i1<0){
+                    throw  new BusinessException("更新失败");
+                }
+            }
+        }
+        if (secondPors.size()>0){
+            for (SecondPor secondPor:secondPors){
+                secondPor.setPortfolioName(portfolioName);
+                int i2 = secondPorMapper.updateByPrimaryKey(secondPor);
+                if(i2<0){
+                    throw  new BusinessException("更新失败");
+                }
+            }
+        }
         worksCllection.setPortfolioName(portfolioName);
+        worksCllection.setPortfolioId(portfolioId);
         int i = wcm.updateByPrimaryKey(worksCllection);
         if(i>0){
-            return new Result(0,"编辑成功",i);
+            return new Result(0,"更新成功",i);
         }else {
             throw  new BusinessException("编辑失败");
         }
@@ -207,6 +253,9 @@ public class WorksCllectionServiceImpl implements WorksCllectionService {
     public Result deleteById(Long portfolioId){
         List<SecondPor> secondPors = secondPorMapper.selectAll();
         WorksCllection worksCllection = wcm.selectByPrimaryKey(portfolioId);
+        if (worksCllection==null){
+            throw  new BusinessException("该作品集已经被删除");
+        }
         for (SecondPor secondPor:secondPors){
             if (secondPor.getPortfolioName().equals(worksCllection.getPortfolioName())){
                 throw  new BusinessException("作品集下有下级作品,无法删除");

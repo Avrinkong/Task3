@@ -20,7 +20,15 @@ public class StudioServiceImpl implements StudioService {
 
     @Override
     public Result add(Object object) {
+
         Studio studio = (Studio) object;
+        List<Studio> studios = studioMapper.selectAll();
+        for (Studio s:studios){
+            if (s.getStudioName().equals(studio.getStudioName())){
+                throw new BusinessException("该工作室已经存在");
+            }
+        }
+        studio.setStudioStatus(2);
         Date date=new Date();
         long timestamp=date.getTime();
         studio.setStudioCreatetime(timestamp);
@@ -30,10 +38,9 @@ public class StudioServiceImpl implements StudioService {
             throw  new BusinessException("工作室添加失败");
         }else if(insert>0){
             return new Result(0,"工作室添加成功",insert);
-        }else if (insert<0){
+        }else {
             throw  new BusinessException("工作室添加失败");
         }
-        throw  new BusinessException("工作室添加异常");
     }
 
     @Override
@@ -66,18 +73,16 @@ public class StudioServiceImpl implements StudioService {
     public List<Studio> findAll(String studioName, Integer studioStatus) {
         List<Studio> list = new ArrayList<>();
         List<Studio> studios = studioMapper.selectAll();
-        //logger.info(messages+"1111111111111111");
         for (Studio s:studios){
             if(studioStatus==null){
-                if(s.getStudioName().equals(studioName)){
+                if(s.getStudioName().contains(studioName)){
                     list.add(s);
                 }
             }else {
                 if (s.getStudioName()!=null) {
-                    if (s.getStudioName().equals(studioName)) {
+                    if (s.getStudioName().contains(studioName)) {
                         if (s.getStudioStatus() == studioStatus) {
                             list.add(s);
-                            // logger.info(message+"22222222222222");
                         }
                     }
                 }
@@ -97,7 +102,16 @@ public class StudioServiceImpl implements StudioService {
      */
 
     public Result updateById(Integer studioId,String studioName,String studioPicture,String studioText,String studioEditor) {
+        List<Studio> studios = studioMapper.selectAll();
+        for (Studio s:studios){
+            if (s.getStudioName().equals(studioName)){
+                throw new BusinessException("该工作室名称已经被使用");
+            }
+        }
         Studio studio = studioMapper.selectByPrimaryKey(studioId);
+        if (studio==null){
+            throw new BusinessException("该工作室不存在，无法编辑！");
+        }
         studio.setStudioId(studioId);
         if (studioName!=null){
             studio.setStudioName(studioName);
@@ -134,7 +148,9 @@ public class StudioServiceImpl implements StudioService {
             throw  new BusinessException("id不能为空");
         }
         Studio studio = studioMapper.selectByPrimaryKey(studioId);
-
+        if (studio==null){
+            throw new BusinessException("该工作室不存在，无法编辑！");
+        }
 
         if (studio.getStudioStatus() != null && studio.getStudioStatus() != studioStutsa) {
             if (studio.getStudioStatus() == 1) {

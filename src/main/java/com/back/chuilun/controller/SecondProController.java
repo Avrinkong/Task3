@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -34,18 +35,28 @@ public class SecondProController {
     @ResponseBody
     public Result findSecondPro(String secName, Integer secStatus){
         if (secName!=null&&!secName.trim().equals("")){
-            if (secStatus!=null){
                 List<SecondPor> all = secondProService.findAll(secName,secStatus);
                 if (all.size()>0) {
-                    return new Result(0, "success", all);
+                    return new Result(0, "查找成功", all);
                 }else {
-                    throw  new BusinessException("false");
+                    throw  new BusinessException("查询失败");
                 }
-            }else {
-                throw  new BusinessException("二级标题状态为空");
-            }
         }else {
-            throw  new BusinessException("二级标题名不能为空");
+            Result all = secondProService.findAll();
+            List<SecondPor> list = new ArrayList<>();
+            if (secStatus!=null){
+                List<SecondPor> data = (List<SecondPor>) all.getData();
+                for (SecondPor studio:data){
+                    if (studio.getSecStatus().equals(secStatus)){
+                        list.add(studio);
+                    }
+                }
+                if (list.size()<=0){
+                    throw new BusinessException("查询错误");
+                }
+                all.setData(list);
+            }
+            return all;
         }
     }
 
@@ -67,8 +78,7 @@ public class SecondProController {
     public Result addPortfolio(String secName,String portfolioName){
         if(secName!=null){
             if (portfolioName!=null&&!portfolioName.trim().equals("")){
-                Result add = secondProService.add(secName,portfolioName);
-                return add;
+                return secondProService.add(secName,portfolioName);
             }else {
                 throw  new BusinessException("导航不能为空");
             }

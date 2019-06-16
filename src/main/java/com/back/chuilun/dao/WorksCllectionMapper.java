@@ -52,4 +52,6 @@ public interface WorksCllectionMapper {
    /* List<WorksCllection> selectByPName(String portfolioName);*/
 
     List<WorksCllection> selectByStatus(Integer pstutsa);
+
+    WorksCllection selectByPName(String portfolioName);
 }

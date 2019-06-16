@@ -16,6 +16,7 @@ import org.springframework.web.multipart.MultipartFile;
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -35,15 +36,29 @@ public class WorksController {
     @RequestMapping(value = "find",method = RequestMethod.POST)
     @ResponseBody
     public Result findWorks(String worksName, Integer wstatus){
-        if (worksName!=null&&worksName.trim().equals("")){
+        if (worksName!=null&&!worksName.trim().equals("")){
             List<Works> all = worksService.findAll(worksName,wstatus);
             if (all.size()>0) {
-                return new Result(0, "success", all);
+                return new Result(0, "查找成功", all);
             }else {
-                throw  new BusinessException("查找成功");
+                throw  new BusinessException("该作品不存在");
             }
         }else {
-            throw  new BusinessException("作品集名称不能为空");
+            Result all = worksService.findWorks();
+            List<Works> list = new ArrayList<>();
+            if (wstatus!=null){
+                List<Works> data = (List<Works>) all.getData();
+                for (Works studio:data){
+                    if (studio.getWstatus().equals(wstatus)){
+                        list.add(studio);
+                    }
+                }
+                if (list.size()<=0){
+                    throw new BusinessException("查询错误");
+                }
+                all.setData(list);
+            }
+            return all;
         }
     }
 
@@ -82,7 +97,7 @@ public class WorksController {
                     // 自定义的文件名称
                     String trueFileName=String.valueOf(System.currentTimeMillis())+fileName;
                     // 设置存放图片文件的路径
-                    path=realPath+/*System.getProperty("file.separator")+*/trueFileName;
+                    path=realPath+/*System.getProperty("file.separator")+*/"WEB-INF/files/"+trueFileName;
 
                     System.out.println("存放图片文件的路径:"+path);
                     // 转存文件到指定的路径
@@ -178,21 +193,26 @@ public class WorksController {
 
     @RequestMapping(value = "update",method = RequestMethod.POST)
     @ResponseBody
-    public Result updateWorks(Integer worksId,String worksName,String worksIntro,String worksMpic,String worksUrl,String worksPic,String worksBintro){
+    public Result updateWorks(Integer worksId,String worksName,String worksIntro,String worksMpic,String worksUrl,String worksPic,String worksBintro,String secondPorName,String portfolioName){
         if (worksId!=null){
             if (worksName!=null&&!worksName.trim().equals("")){
                 if (worksIntro!=null&&!worksIntro.trim().equals("")){
                     if (worksMpic!=null&&!worksMpic.trim().equals("")){
                         if (worksUrl!=null&&!worksUrl.trim().equals("")){
-                            if (worksPic!=null&&worksPic.trim().equals("")){
-                                if (worksBintro!=null&&worksBintro.trim().equals("")){
+                            if (worksPic!=null&&!worksPic.trim().equals("")){
+                                if (worksBintro!=null&&!worksBintro.trim().equals("")){
                                     Works works = worksService.findById(worksId);
+                                    if (works==null){
+                                        throw new BusinessException("该作品不存在！");
+                                    }
                                     works.setWorksName(worksName);
                                     works.setWorksIntro(worksIntro);
                                     works.setWorksMpic(worksMpic);
                                     works.setWorksUrl(worksUrl);
                                     works.setWorksPic(worksPic);
                                     works.setWorksBintro(worksBintro);
+                                    works.setPortfolioName(portfolioName);
+                                    works.setSecondPorName(secondPorName);
                                     Result update = worksService.update(works);
                                     return update;
                                 }else {

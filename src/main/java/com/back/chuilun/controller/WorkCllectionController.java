@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -25,7 +26,7 @@ public class WorkCllectionController {
     @RequestMapping(value = "find",method = RequestMethod.GET)
     @ResponseBody
     public Result findWorks(){
-        Result works = wcmi.findAll();
+        Result works = wcmi.findWorks();
         return works;
     }
 
@@ -33,18 +34,35 @@ public class WorkCllectionController {
     @ResponseBody
     public Result findportfolio(String portfolioName, Integer pstatus){
         if (portfolioName!=null&&!portfolioName.trim().equals("")){
-            if (pstatus!=null){
+            if (pstatus!=null&&pstatus>0&&pstatus<3){
                 List<WorksCllection> all = wcmi.findAll(portfolioName,pstatus);
                 if (all.size()>0) {
                     return new Result(0, "success", all);
                 }else {
                     throw  new BusinessException("作品集名称不存在");
                 }
+            }else if (pstatus==null){
+                List<WorksCllection> all = wcmi.findAll(portfolioName, pstatus);
+                return new Result(1,"查找全部成功",all);
             }else {
-                throw  new BusinessException("作品集上下状态不能为空");
+                throw  new BusinessException("作品集上下状态错误");
             }
         }else {
-            throw  new BusinessException("作品集名称不能为空");
+            Result all = wcmi.findWorks();
+            List<WorksCllection> list = new ArrayList<>();
+            if (pstatus!=null){
+                List<WorksCllection> data = (List<WorksCllection>) all.getData();
+                for (WorksCllection studio:data){
+                    if (studio.getPstatus().equals(pstatus)){
+                        list.add(studio);
+                    }
+                }
+                if (list.size()<=0){
+                    throw new BusinessException("查询错误");
+                }
+                all.setData(list);
+            }
+            return all;
         }
     }
 

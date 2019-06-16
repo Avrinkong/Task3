@@ -14,18 +14,19 @@
 
     <!-- 自动扫描  @Controller-->
      <context:component-scan base-package="com.back.chuilun.controller"/>
+    <!--启动springMVC的注解功能，完成请求和注解POJO的映射-->
      <mvc:annotation-driven />
 
-   <!-- &lt;!&ndash;转化json&ndash;&gt;
+    <!--转化json-->
     <bean class="org.springframework.web.servlet.mvc.annotation.AnnotationMethodHandlerAdapter">
         <property name="messageConverters">
             <list>
-                &lt;!&ndash;json视图拦截器，读取到@ResponseBody的时候去配置它&ndash;&gt;
+                <!--json视图拦截器，读取到@ResponseBody的时候去配置它-->
                 <ref bean="mappingJacksonHttpMessageConverter"/>
             </list>
         </property>
     </bean>
-    &lt;!&ndash;json转化器，它可以将结果转化&ndash;&gt;
+    <!--json转化器，它可以将结果转化-->
     <bean id="mappingJacksonHttpMessageConverter"
           class="org.springframework.http.converter.json.MappingJackson2HttpMessageConverter">
         <property name="supportedMediaTypes">
@@ -33,7 +34,7 @@
                 <value>application/json;charset=UTF-8</value>
             </list>
         </property>
-    </bean>-->
+    </bean>
 
     <!-- 定义跳转的文件的前后缀 ，视图模式配置 -->
     <bean  id="internalResourceViewResolver" class="org.springframework.web.servlet.view.InternalResourceViewResolver">

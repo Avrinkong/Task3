@@ -76,7 +76,7 @@
     works_mpic, works_pic
     from works
     where works_id = #{worksId,jdbcType=INTEGER}
-    order by change_time
+    order by change_time desc
   </select>
   <select id="selectAll" resultMap="BaseResultMap">
     <!--
@@ -87,7 +87,7 @@
     editor, wstatus, works_url, works_intro, works_updateman, works_spare, works_bintro, 
     works_mpic, works_pic
     from works
-    order by change_time
+    order by change_time desc
   </select>
   <select id="selectByName"  resultMap="BaseResultMap">
     select works_id, works_name, portfolio_name, second_por_name, wcreate_time, change_time,
@@ -98,12 +98,21 @@
     order by change_time
   </select>
 
-  <select id="selectByIntro"  resultMap="BaseResultMap">
+  <select id="selectByPName"  resultMap="BaseResultMap">
     select works_id, works_name, portfolio_name, second_por_name, wcreate_time, change_time,
     editor, wstatus, works_url, works_intro, works_updateman, works_spare, works_bintro,
     works_mpic, works_pic
     from works
-    where works_intro like "%"#{worksIntro,jdbcType=VARCHAR}"%"
+    where portfolio_name = #{portfolioName,jdbcType=VARCHAR}
+    order by change_time
+  </select>
+
+  <select id="selectBySName"  resultMap="BaseResultMap">
+    select works_id, works_name, portfolio_name, second_por_name, wcreate_time, change_time,
+    editor, wstatus, works_url, works_intro, works_updateman, works_spare, works_bintro,
+    works_mpic, works_pic
+    from works
+    where second_por_name = #{secondPorName,jdbcType=VARCHAR}
     order by change_time
   </select>
 </mapper>

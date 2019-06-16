@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Controller
@@ -30,18 +31,28 @@ public class StudioController {
     @ResponseBody
     public Result findStudio(String studioName, Integer studioStatus){
         if (studioName!=null&&!studioName.trim().equals("")){
-            if (studioStatus!=null){
-                List<Studio> all = studioService.findAll(studioName, studioStatus);
-                if (all.size()>0) {
-                    return new Result(0, "success", all);
-                }else {
-                    return new Result(-1,"false");
-                }
+            List<Studio> all = studioService.findAll(studioName, studioStatus);
+            if (all.size()>0) {
+                return new Result(0, "查询成功", all);
             }else {
-                return new Result(-1,"工作室上下架状态不能为空");
+                return new Result(-1,"该工作室不存在");
             }
         }else {
-            return new Result(-1,"工作室名称不能为空");
+            Result all = studioService.findAll();
+            List<Studio> list = new ArrayList<>();
+            if (studioStatus!=null){
+                List<Studio> data = (List<Studio>) all.getData();
+                for (Studio studio:data){
+                    if (studio.getStudioStatus()==studioStatus){
+                        list.add(studio);
+                    }
+                }
+                if (list.size()<=0){
+                    throw new BusinessException("该工作室不存在");
+                }
+                all.setData(list);
+            }
+            return all;
         }
     }
 

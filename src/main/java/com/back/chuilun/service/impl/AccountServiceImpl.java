@@ -67,11 +67,15 @@ public class AccountServiceImpl implements AccountService {
     public List<Account> findAll(String accName, String roleName) {
         List<Account> list = new ArrayList<>();
         List<Account> accounts = accountMapper.selectByName(accName);
+       /* List<Account> accounts1 = accountMapper.selectAll();
+        for (Account account : accounts1){
+            if (account=)
+        }*/
         //logger.info(messages+"1111111111111111");
         for (Account a:accounts){
-            if(roleName==null&&roleName.trim().equals("")){
+            if(roleName==null||roleName.trim().equals("")){
                     list.add(a);
-            }else  if (a.getRoleName().equals(roleName)){
+            }else  if (a.getRoleName().contains(roleName)){
                 list.add(a);
             }
         }
@@ -80,6 +84,12 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Result add(Account account) {
+        List<Account> accounts = accountMapper.selectAll();
+        for (Account account1:accounts){
+            if (account1.getAccName().equals(account.getAccName())){
+                throw new BusinessException("该用户名已被使用");
+            }
+        }
         Date date=new Date();
         long timestamp=date.getTime();
         account.setAccCreatetime(timestamp);
@@ -95,6 +105,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Result updateById(Account account) {
+        Account account1 = accountMapper.selectByPrimaryKey(account.getAccId());
+        if (account1==null){
+            throw new BusinessException("该账户不存在");
+        }
         Date date=new Date();
         long timestamp=date.getTime();
         account.setAccUpdatetime(timestamp);
@@ -108,6 +122,10 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Result deleteById(Long accId) {
+        Account account = accountMapper.selectByPrimaryKey(accId);
+        if (account==null){
+            throw new BusinessException("该用户不存在");
+        }
         int i = accountMapper.deleteByPrimaryKey(accId);
         if(i>0){
             return new Result(0,"删除成功",i);
@@ -118,6 +136,9 @@ public class AccountServiceImpl implements AccountService {
 
     @Override
     public Result changePassword(Long accId, String oldpassword, String newpassword) {
+        if (oldpassword.equals(newpassword)){
+            throw new BusinessException("旧密码和新密码不能相同");
+        }
         Account account = accountMapper.selectByPrimaryKey(accId);
         if(account.getAccPassword().equals(oldpassword)){
             account.setAccPassword(newpassword);
